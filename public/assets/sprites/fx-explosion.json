@@ -1,0 +1,19 @@
+{
+  "spritesheet": {
+    "cell_size": {
+      "width": 64,
+      "height": 64
+    },
+    "columns": 9,
+    "pivot": "cell-center",
+    "rows": [
+      {
+        "row": 0,
+        "type": "animation",
+        "frame_count": 9,
+        "animation": "explode",
+        "direction": "south"
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "output": "public/assets/sprites/fx-explosion",
+  "rows": [
+    {
+      "type": "animation",
+      "animation": "explode",
+      "direction": "south",
+      "frames": [
+        { "file": "frame_0.png" }, { "file": "frame_1.png" }, { "file": "frame_2.png" },
+        { "file": "frame_3.png" }, { "file": "frame_4.png" }, { "file": "frame_5.png" },
+        { "file": "frame_6.png" }, { "file": "frame_7.png" }, { "file": "frame_8.png" }
+      ]
+    }
+  ]
+}
