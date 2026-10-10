@@ -89,10 +89,10 @@ describe('towers', () => {
   });
 
   it('turns towers to face their target', () => {
-    const towers = [{ pad: 0, type: 'blaster', level: 1, x: 0, y: -60 }];
+    const towers = [{ pad: 0, type: 'blaster', level: 1, x: -60, y: 0 }];
     const world = createWorld({ path, spawns: [{ type: 'blob', at: 0 }], drawWord: cycle(['cat']), towers });
     stepWorld(world, 0.1);
-    expect(world.towers[0].facing).toBe('south');
+    expect(world.towers[0].facing).toBe('east');
   });
 
   it('ignores a shielded boss', () => {
