@@ -6,5 +6,11 @@
     "boss": { "a": "98dbe094-a8c5-4566-9caa-270b9ec366f7", "b": "107d3aed-73f4-474b-b3b3-7f7ad7498c09", "c": "f1f7a2b9-be81-4b36-a7c4-8cea783b97a7" }
   },
   "picks": {},
-  "assets": {}
+  "assets": {
+    "terrain": { "tool": "create_topdown_tileset", "id": "9da86472-df41-43ac-93b9-ef502a710b59", "lower": "smooth tan cobblestone path", "upper": "bright teal alien grass with tiny pink flowers", "files": ["public/assets/terrain/terrain.png", "public/assets/terrain/terrain.json"] },
+    "pad": { "tool": "create_1_direction_object", "id": "4ff9578d-6b59-412c-bfef-dd22e052d19c", "prompt": "round metal tower build pad, flat sci-fi platform with a glowing blue rim, seen from above", "files": ["public/assets/images/pad.png"] },
+    "base": { "tool": "create_1_direction_object", "id": "991bc713-3526-44fa-b50f-0e38371b436e", "prompt": "cute dome-shaped space base with an antenna and glowing round windows, kids cartoon style, seen from above", "files": ["public/assets/images/base.png"] },
+    "portal": { "tool": "create_1_direction_object", "id": "9a672335-5e04-402d-b577-c730d8cfae65", "prompt": "swirling purple alien portal on the ground with sparkles, seen from above", "files": ["public/assets/images/portal.png"] },
+    "bg-space": { "tool": "create_image_pixflux", "id": "c6638ffd-8232-45b0-bb8c-3bd0c841913c", "prompt": "starry purple night sky with distant colorful planets and a soft nebula, cute pixel art space background", "files": ["public/assets/images/bg-space.png"] }
+  }
 }
