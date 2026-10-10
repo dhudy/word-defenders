@@ -129,6 +129,8 @@ docs/playtest-checklist.md
 
 **CHECKPOINT A (controller action after Task 2):** tell the user that `assets/candidates/index.html` is ready and ask them to open it with their son and pick one Blob, one Zoomer, one Chonk and one Boss (letters A/B/C). Continue with Tasks 3–15 while waiting. Before dispatching Task 16, make sure the picks are in hand, and pass them to the Task 16 implementer. Never guess the picks.
 
+**Picks received (2026-10-10):** Blob A, Zoomer A, Chonk B, and two bosses — Boss A for missions 1–5 (sprite `alien-boss`) and Boss C for missions 6–10 (sprite `alien-boss-2`). The user chose to use both bosses.
+
 ---
 ### Task 1: Project Scaffold
 
@@ -3656,21 +3658,21 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>"
 
 ### Task 16: Art — Animate and Export the Picked Aliens
 
-**Precondition:** the controller has the CHECKPOINT A picks (one letter A/B/C for each of blob, zoomer, chonk, boss) and includes them in this task's prompt. If they are missing, stop and report `BLOCKED: need alien picks`.
+**Picks (CHECKPOINT A, 2026-10-10):** blob **a**, zoomer **a**, chonk **b**, boss **a** (missions 1–5) and boss2 **c** (missions 6–10). The game uses two bosses: the `boss2` pick is the Boss C candidate and exports as sprite `alien-boss-2`.
 
 Load tools with ToolSearch: `select:mcp__pixellab__get_character,mcp__pixellab__animate_character,mcp__pixellab__delete_animation,mcp__pixellab__wait_for_jobs`.
 
 **Files:**
-- Create: `assets/raw/aliens/<type>.zip` and extracted folders, `public/assets/sprites/alien-{blob,zoomer,chonk,boss}.png` + `.json`
+- Create: `assets/raw/aliens/<name>.zip` and extracted folders (names `blob`, `zoomer`, `chonk`, `boss`, `boss-2`), `public/assets/sprites/alien-{blob,zoomer,chonk,boss,boss-2}.png` + `.json`
 - Modify: `assets/manifest.json` (`picks`, `assets`)
 
 **Interfaces:**
 - Consumes: `assets/manifest.json` `candidates`; `parseSheet`.
-- Produces: sprite keys `alien-blob`, `alien-zoomer`, `alien-chonk`, `alien-boss`, each with a `walk` animation in `south`, `west`, `east` and `north`.
+- Produces: sprite keys `alien-blob`, `alien-zoomer`, `alien-chonk`, `alien-boss` (missions 1–5) and `alien-boss-2` (missions 6–10), each with a `walk` animation in `south`, `west`, `east` and `north`.
 
 - [ ] **Step 1: Record the picks**
 
-Set `"picks"` in `assets/manifest.json`, for example `{ "blob": "a", "zoomer": "c", "chonk": "b", "boss": "a" }`, using the letters the controller supplied. Look up each picked character ID in `candidates`.
+Set `"picks"` in `assets/manifest.json` to `{ "blob": "a", "zoomer": "a", "chonk": "b", "boss": "a", "boss2": "c" }`. Look up each picked character ID in `candidates` (`boss2` uses `candidates.boss.c`).
 
 - [ ] **Step 2: Add walk animations**
 
@@ -3690,7 +3692,7 @@ cp assets/raw/aliens/blob/*.png public/assets/sprites/alien-blob.png
 cp assets/raw/aliens/blob/*.json public/assets/sprites/alien-blob.json
 ```
 
-Repeat for `zoomer`, `chonk` and `boss`. Each ZIP holds exactly one PNG and one JSON.
+Repeat for `zoomer`, `chonk`, `boss` (Boss A) and `boss-2` (Boss C, written to `alien-boss-2.png` / `.json`). Each ZIP holds exactly one PNG and one JSON.
 
 - [ ] **Step 4: Verify the walk cycles**
 
@@ -3698,7 +3700,7 @@ Repeat for `zoomer`, `chonk` and `boss`. Each ZIP holds exactly one PNG and one 
 node --input-type=module -e "
 import { readFileSync } from 'node:fs';
 import { parseSheet } from './src/logic/sheets.js';
-for (const type of ['blob', 'zoomer', 'chonk', 'boss']) {
+for (const type of ['blob', 'zoomer', 'chonk', 'boss', 'boss-2']) {
   const sheet = parseSheet(JSON.parse(readFileSync('public/assets/sprites/alien-' + type + '.json', 'utf8')));
   const dirs = Object.keys(sheet.animations.walk ?? {}).sort().join(',');
   if (dirs !== 'east,north,south,west') throw new Error(type + ' walk directions: ' + dirs);
@@ -3707,7 +3709,7 @@ for (const type of ['blob', 'zoomer', 'chonk', 'boss']) {
 "
 ```
 
-Expected: 4 lines, one per alien, with no error.
+Expected: 5 lines, one per alien sprite, with no error.
 
 - [ ] **Step 5: Record the aliens in `assets/manifest.json`**
 
@@ -3715,7 +3717,7 @@ Expected: 4 lines, one per alien, with no error.
 "alien-blob": { "tool": "create_character + animate_character", "id": "<character id>", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-blob.png", "public/assets/sprites/alien-blob.json"] }
 ```
 
-(one entry per alien type)
+(one entry per alien sprite: `alien-blob`, `alien-zoomer`, `alien-chonk`, `alien-boss`, `alien-boss-2`)
 
 - [ ] **Step 6: Commit**
 
@@ -3743,7 +3745,7 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>"
   - `showLoadError(scene, key)` (`src/ui/errors.js`)
   - `createSfx({ AudioContextClass }?)`, `SOUND_NAMES`, `sfx` singleton with `play(name)`, `unlock()`, `setEnabled(on)` (`src/audio/sfx.js`)
   - `app` (`{ persistent, save }`) and `updateSave(next) → boolean` (`src/app.js`)
-  - `ALIEN_TYPES`, `TOWER_SPRITES`, `SPRITES`, `IMAGES`, `FONT_FILES`, `LABEL_OFFSETS`, `ANIMATION_RATES`, `alienSpriteKey(type)`, `towerSpriteKey(type, level)` (`src/assets.js`)
+  - `ALIEN_TYPES`, `ALIEN_SPRITES`, `LATE_BOSS_MISSION`, `TOWER_SPRITES`, `SPRITES`, `IMAGES`, `FONT_FILES`, `LABEL_OFFSETS`, `ANIMATION_RATES`, `alienSpriteKey(type, missionId = 1)` (Boss A's `alien-boss` before mission 6, Boss C's `alien-boss-2` from mission 6), `towerSpriteKey(type, level)` (`src/assets.js`)
   - `parseDebug(search) → { scene, data: { missionId, wave, coins, hearts, stars, autostart } } | null` (`src/logic/debug.js`)
   - Registry key `sheets` (`{ [spriteKey]: parseSheet result }`); animations `<spriteKey>-<animation>-<direction>`; scene keys `Boot`, `Preload`, `Title`
   - `globalThis.__scene` (set by `markReady`) for `tools/shot.mjs`
@@ -3876,7 +3878,9 @@ describe('parseDebug', () => {
 import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { SPRITES, IMAGES, FONT_FILES, ALIEN_TYPES, TOWER_SPRITES, LABEL_OFFSETS } from '../src/assets.js';
+import {
+  SPRITES, IMAGES, FONT_FILES, ALIEN_TYPES, ALIEN_SPRITES, TOWER_SPRITES, LABEL_OFFSETS, alienSpriteKey,
+} from '../src/assets.js';
 import { parseSheet, buildTerrainLookup, cornerKey } from '../src/logic/sheets.js';
 import { DIRECTIONS_8 } from '../src/logic/towers.js';
 import { MAP_1, terrainCorners } from '../src/logic/map.js';
@@ -3885,10 +3889,20 @@ const publicPath = (p) => fileURLToPath(new URL(`../public/${p}`, import.meta.ur
 const readJson = (p) => JSON.parse(readFileSync(publicPath(p), 'utf8'));
 
 describe('asset keys', () => {
-  it('lists 4 aliens, 9 towers and the explosion', () => {
-    expect(SPRITES).toHaveLength(14);
+  it('lists 5 alien sprites (two bosses), 9 towers and the explosion', () => {
+    expect(ALIEN_SPRITES).toEqual(['alien-blob', 'alien-zoomer', 'alien-chonk', 'alien-boss', 'alien-boss-2']);
+    expect(SPRITES).toHaveLength(15);
     expect(TOWER_SPRITES).toHaveLength(9);
     expect(Object.keys(LABEL_OFFSETS).sort()).toEqual([...ALIEN_TYPES].sort());
+  });
+
+  it('switches to the second boss from mission 6', () => {
+    expect(alienSpriteKey('boss', 1)).toBe('alien-boss');
+    expect(alienSpriteKey('boss', 5)).toBe('alien-boss');
+    expect(alienSpriteKey('boss', 6)).toBe('alien-boss-2');
+    expect(alienSpriteKey('boss', 10)).toBe('alien-boss-2');
+    expect(alienSpriteKey('chonk', 9)).toBe('alien-chonk');
+    expect(alienSpriteKey('blob')).toBe('alien-blob');
   });
 });
 
@@ -3900,10 +3914,10 @@ describe('shipped assets', () => {
     }
   });
 
-  it('gives every alien a 4-direction walk', () => {
-    for (const type of ALIEN_TYPES) {
-      const sheet = parseSheet(readJson(`assets/sprites/alien-${type}.json`));
-      expect(Object.keys(sheet.animations.walk ?? {}).sort(), type).toEqual(['east', 'north', 'south', 'west']);
+  it('gives every alien sprite a 4-direction walk', () => {
+    for (const key of ALIEN_SPRITES) {
+      const sheet = parseSheet(readJson(`assets/sprites/${key}.json`));
+      expect(Object.keys(sheet.animations.walk ?? {}).sort(), key).toEqual(['east', 'north', 'south', 'west']);
     }
   });
 
@@ -4069,14 +4083,20 @@ export function parseDebug(search) {
 ```js
 export const ALIEN_TYPES = Object.freeze(['blob', 'zoomer', 'chonk', 'boss']);
 
-export const alienSpriteKey = (type) => `alien-${type}`;
+// Boss A leads missions 1-5; Boss C (sprite alien-boss-2) takes over from this mission.
+export const LATE_BOSS_MISSION = 6;
+
+export const alienSpriteKey = (type, missionId = 1) =>
+  type === 'boss' && missionId >= LATE_BOSS_MISSION ? 'alien-boss-2' : `alien-${type}`;
 export const towerSpriteKey = (type, level) => `tower-${type}-${level}`;
+
+export const ALIEN_SPRITES = Object.freeze([...ALIEN_TYPES.map((type) => alienSpriteKey(type)), 'alien-boss-2']);
 
 export const TOWER_SPRITES = Object.freeze(
   ['blaster', 'freeze', 'rocket'].flatMap((type) => [1, 2, 3].map((level) => towerSpriteKey(type, level))),
 );
 
-export const SPRITES = Object.freeze([...ALIEN_TYPES.map(alienSpriteKey), ...TOWER_SPRITES, 'fx-explosion']);
+export const SPRITES = Object.freeze([...ALIEN_SPRITES, ...TOWER_SPRITES, 'fx-explosion']);
 
 export const IMAGES = Object.freeze(['pad', 'base', 'portal', 'bg-space', 'coin', 'heart', 'star', 'shield', 'bolt', 'rocket-shell', 'freeze-puff']);
 
@@ -4733,7 +4753,7 @@ This task builds a playable game without towers: aliens walk the path, words are
   - Scene `Game`, started with `{ missionId, wave?, coins?, hearts?, autostart? }`
   - `new MapView(scene, map, { onPadClick? })` with `padPosition(index) → {x,y}` and `flashBase()`
   - `new Hud(scene, { missionId, onPause })` with `set(run)` and `flashHearts()`
-  - `new AlienView(scene, alien)` with `sync(alien, typing)`, `wobble()`, `destroy()` and a `sprite` property
+  - `new AlienView(scene, alien, missionId)` with `sync(alien, typing)`, `wobble()`, `destroy()` and a `sprite` property (`missionId` picks the boss sprite through `alienSpriteKey`)
   - `showModal(scene, { message, buttons: [{ label, onClick }] }) → close()`
   - DEV only: `globalThis.__debug = { run, firstWord() }`
 
@@ -4876,9 +4896,9 @@ const SLOW_TINT = 0x9fd8ff;
 const LABEL_MIN_Y = 86;
 
 export class AlienView {
-  constructor(scene, alien) {
+  constructor(scene, alien, missionId) {
     this.scene = scene;
-    this.spriteKey = alienSpriteKey(alien.type);
+    this.spriteKey = alienSpriteKey(alien.type, missionId);
     this.labelOffset = LABEL_OFFSETS[alien.type];
     this.dir = null;
     this.sprite = scene.add.sprite(alien.x, alien.y, this.spriteKey);
@@ -5263,7 +5283,7 @@ export class Game extends Phaser.Scene {
       alive.add(alien.id);
       let view = this.alienViews.get(alien.id);
       if (!view) {
-        view = new AlienView(this, alien);
+        view = new AlienView(this, alien, this.run.mission.id);
         this.alienViews.set(alien.id, view);
       }
       view.sync(alien, this.run.typing);
@@ -5343,6 +5363,7 @@ Expected (each run prints `No console errors.`):
 (npx vite --port 5199 --strictPort > .shots/vite.log 2>&1 &) ; sleep 3
 node tools/shot.mjs --url "http://localhost:5199/?mission=1&autostart=1" --scene Game --do "until:__debug?.firstWord()" --do "typefirst" --do "wait:120" --do "shot:.shots/19-zap.png"
 node tools/shot.mjs --url "http://localhost:5199/?mission=4&wave=5&autostart=1" --scene Game --do "until:__debug?.run.world?.aliens.some((a) => a.type === 'boss')" --do "wait:1500" --do "shot:.shots/19-boss.png"
+node tools/shot.mjs --url "http://localhost:5199/?mission=8&wave=5&autostart=1" --scene Game --do "until:__debug?.run.world?.aliens.some((a) => a.type === 'boss')" --do "wait:1500" --do "shot:.shots/19-boss-late.png"
 node tools/shot.mjs --url "http://localhost:5199/?mission=1&autostart=1" --scene Game --do "until:__debug?.firstWord()" --do "click:968,32" --do "wait:300" --do "shot:.shots/19-paused.png" --do "click:402,358" --do "wait:500" --do "shot:.shots/19-resumed.png"
 node tools/shot.mjs --url "http://localhost:5199/?mission=1&autostart=1&hearts=1" --scene Game --do "until:__debug?.run.phase === 'failed'" --do "wait:300" --do "shot:.shots/19-failed.png" --do "click:512,358" --do "wait:300" --do "shot:.shots/19-retry.png"
 pkill -f "vite --port 5199"
@@ -5350,7 +5371,8 @@ pkill -f "vite --port 5199"
 
 Expected (each run prints `No console errors.`):
 - `19-zap.png`: a cyan laser line from the base to where the typed alien was, an explosion there, and a floating `+5` with a coin; the HUD shows `35`.
-- `19-boss.png`: the mission-4 boss (wave 5 spawns 4 escorts first) just past the portal inside two nested cyan shield bubbles, with its word bubble above it and fully below the HUD bar.
+- `19-boss.png`: the mission-4 boss — Boss A, the purple caped king — (wave 5 spawns 4 escorts first) just past the portal inside two nested cyan shield bubbles, with its word bubble above it and fully below the HUD bar.
+- `19-boss-late.png`: the mission-8 boss is Boss C, the red armored general (sprite `alien-boss-2`), inside three nested shield bubbles, with its word bubble fully below the HUD bar.
 - `19-paused.png`: a dark overlay with "Paused" and **RESUME** / **QUIT**; `19-resumed.png`: the overlay is gone and aliens are moving again.
 - `19-failed.png`: after the first Blob reaches the base with 1 heart left, the message "Uh oh, the aliens got through! Let's try that wave again." with **TRY AGAIN**. `19-retry.png`: hearts back to `10`, still `WAVE 1 / 5`, and **START WAVE** visible again.
 
@@ -5855,7 +5877,7 @@ export class Game extends Phaser.Scene {
       alive.add(alien.id);
       let view = this.alienViews.get(alien.id);
       if (!view) {
-        view = new AlienView(this, alien);
+        view = new AlienView(this, alien, this.run.mission.id);
         this.alienViews.set(alien.id, view);
       }
       view.sync(alien, this.run.typing);
@@ -6324,7 +6346,7 @@ After any change: `npm test`.
 - [ ] Title: Play and Grown-ups both work; aliens parade across.
 - [ ] Mission Map: completed missions show stars; the next mission unlocks after a win.
 - [ ] Game: typing, wrong-letter wobble, Escape releases a lock, pause button, auto-pause when switching tabs, build/upgrade/sell, Start Wave, retry after losing all hearts.
-- [ ] Boss: shields pop one word at a time; towers only hurt it after the last shield.
+- [ ] Boss: shields pop one word at a time; towers only hurt it after the last shield. Missions 1–5 bring the purple caped boss; missions 6–10 bring the red armored one.
 - [ ] Results: stars, coins earned, new-tower banner, Next Mission.
 - [ ] Grown-ups: bad words are rejected with line numbers; settings persist after a page reload; Reset progress clears stars but keeps the words.
 ```

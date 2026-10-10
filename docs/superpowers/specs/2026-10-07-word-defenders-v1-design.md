@@ -79,7 +79,7 @@ Modules in `src/logic/` take plain data and return plain data. They never import
 
 | Asset | PixelLab tool | Est. generations |
 |---|---|---|
-| 3 aliens (Blob, Zoomer, Chonk) and 1 boss, each with a 4-direction walk cycle | `create_character`, `animate_character("walking")` | 40–60 |
+| 3 aliens (Blob, Zoomer, Chonk) and 2 bosses (one for missions 1–5, one for missions 6–10), each with a 4-direction walk cycle | `create_character`, `animate_character("walking")` | 60–80 |
 | 3 towers × 3 levels, 8 facings each | `create_8_direction_object`, `create_object_state` | ~270 |
 | Ground/path tileset, build pad, base, spawn portal | `create_topdown_tileset`, `create_1_direction_object` | ~100 |
 | Laser bolt, 3 projectiles, explosion, freeze puff, shield bubble, coin, heart, star | `create_image_pixflux`, `animate_image` | ~15 |
@@ -141,6 +141,8 @@ One map: a winding path across an alien planet, from a spawn portal at the left 
 Typing kills any regular alien instantly, so HP only matters for towers.
 
 ### Boss
+
+Two boss designs share the same rules: the player picked one for missions 1–5 and another for missions 6–10, so the second half of the game brings a new boss.
 
 The boss carries 1–3 shields. While any shield is up, towers can't damage it. Each shield shows one word. Typing that word pops the shield, releases the lock and reveals the next shield's word. With every shield gone, the boss shows no word and towers finish it.
 
