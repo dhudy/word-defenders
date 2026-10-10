@@ -10,3 +10,110 @@ body {
   width: 100%;
   height: 100%;
 }
+
+#grownups {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background: rgba(11, 11, 26, 0.6);
+  font-family: 'Andika', sans-serif;
+  color: #ffffff;
+}
+
+#grownups[hidden] {
+  display: none;
+}
+
+.gw-panel {
+  width: min(560px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 24px 28px;
+  background: #1b1b3a;
+  border: 2px solid #5b5bd6;
+  border-radius: 16px;
+}
+
+.gw-panel h1 {
+  margin: 0 0 12px;
+  font-size: 32px;
+}
+
+.gw-panel label {
+  display: block;
+  font-size: 18px;
+}
+
+.gw-panel textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 6px 0;
+  padding: 8px;
+  font: 20px/1.4 'Andika', sans-serif;
+  color: #ffffff;
+  background: #0b0b1a;
+  border: 1px solid #5b5bd6;
+  border-radius: 8px;
+}
+
+.gw-errors {
+  margin: 4px 0 12px;
+  padding-left: 20px;
+  color: #ff8a8a;
+}
+
+.gw-panel fieldset {
+  display: flex;
+  gap: 16px;
+  margin: 8px 0;
+  border: 1px solid #5b5bd6;
+  border-radius: 8px;
+}
+
+.gw-panel fieldset label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gw-panel .gw-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.gw-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.gw-buttons button {
+  padding: 8px 16px;
+  font: 18px 'Andika', sans-serif;
+  color: #ffffff;
+  background: #333355;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.gw-buttons .gw-primary {
+  background: #2e9e5b;
+}
+
+.gw-note {
+  color: #ffd23f;
+}
+
+.gw-status {
+  min-height: 1.4em;
+  color: #3ddc84;
+}
