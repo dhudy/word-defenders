@@ -1,8 +1,10 @@
 import { parseWordList } from '../logic/words.js';
 
 const SPEED_LABELS = { slow: 'Slow', normal: 'Normal', fast: 'Fast' };
+const STORAGE_BLOCKED = "Couldn't save — this browser is blocking storage.";
 
 // Builds the Grown-ups form inside #grownups. Returns a function that hides it.
+// onSave and onReset return whether the change reached storage.
 export function openGrownupsPanel({ save, persistent, onSave, onReset, onClose }) {
   const root = document.getElementById('grownups');
   root.innerHTML = `
@@ -50,15 +52,14 @@ export function openGrownupsPanel({ save, persistent, onSave, onReset, onClose }
       return;
     }
     const speed = root.querySelector('input[name="gw-speed"]:checked').value;
-    onSave({ words, settings: { speed, sound: $('gw-sound').checked } });
+    const stored = onSave({ words, settings: { speed, sound: $('gw-sound').checked } });
     $('gw-words').value = words.join('\n');
-    status('Saved!');
+    status(stored ? 'Saved!' : STORAGE_BLOCKED);
   });
 
   $('gw-reset').addEventListener('click', () => {
     if (!window.confirm('Clear all stars and unlocked missions? The word list stays.')) return;
-    onReset();
-    status('Progress reset.');
+    status(onReset() ? 'Progress reset.' : STORAGE_BLOCKED);
   });
 
   $('gw-back').addEventListener('click', onClose);
