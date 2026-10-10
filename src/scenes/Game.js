@@ -12,8 +12,11 @@ import { addText, COLORS, FILLS } from '../ui/text.js';
 import { addButton } from '../ui/button.js';
 import { showModal } from '../ui/modal.js';
 import { AlienView } from '../objects/AlienView.js';
+import { TowerView } from '../objects/TowerView.js';
 import { MapView } from './game/MapView.js';
 import { Hud } from './game/Hud.js';
+import { BuildMenu } from './game/BuildMenu.js';
+import { Guide } from './game/Guide.js';
 
 const START_BUTTON = { x: 900, y: 544 };
 
@@ -39,13 +42,19 @@ export class Game extends Phaser.Scene {
     this.halted = false;
     this.closeModal = null;
     this.alienViews = new Map();
-    this.mapView = new MapView(this, this.run.map);
+    this.towerViews = new Map();
+    this.projectileViews = new Map();
+    this.mapView = new MapView(this, this.run.map, { onPadClick: (pad) => this.onPadClick(pad) });
     this.hud = new Hud(this, { missionId, onPause: () => this.pause() });
     this.startButton = addButton(this, START_BUTTON.x, START_BUTTON.y, 'START WAVE', () => this.onStartWave(), {
       width: 200,
       height: 48,
       fill: FILLS.go,
     }).setDepth(20000);
+    this.buildMenu = new BuildMenu(this, { onChange: () => this.refreshPhaseUi() });
+    this.guide = missionId === 1 && !app.save.missions[1]
+      ? new Guide(this, { pad: this.mapView.padPosition(0), start: START_BUTTON })
+      : null;
 
     this.input.keyboard.on('keydown', this.onKey, this);
     this.game.events.on(Phaser.Core.Events.BLUR, this.onBlur, this);
@@ -65,13 +74,20 @@ export class Game extends Phaser.Scene {
     if (this.halted) return;
     if (this.run.phase === 'wave') this.handleEvents(Run.update(this.run, delta / 1000));
     this.syncAliens();
+    this.syncTowers();
+    this.syncProjectiles();
     this.hud.set(this.run);
+    this.guide?.update(this.run);
   }
 
   onKey(event) {
     if (this.halted) return;
     const pressed = readKeyEvent(event);
     if (pressed === null) return;
+    if (pressed === 'Escape' && this.buildMenu.isOpen) {
+      this.buildMenu.close();
+      return;
+    }
     const { handled, events } = Run.key(this.run, pressed);
     if (handled) event.preventDefault();
     this.handleEvents(events);
@@ -79,12 +95,20 @@ export class Game extends Phaser.Scene {
 
   onStartWave() {
     if (this.run.phase !== 'break' || this.halted) return;
+    this.buildMenu.close();
     this.handleEvents(Run.startWave(this.run));
     this.refreshPhaseUi();
   }
 
+  onPadClick(pad) {
+    if (this.run.phase !== 'break' || this.halted || this.closeModal) return;
+    this.buildMenu.open(this.run, pad, this.mapView.padPosition(pad));
+  }
+
   refreshPhaseUi() {
-    this.startButton.show(this.run.phase === 'break');
+    const inBreak = this.run.phase === 'break';
+    this.startButton.show(inBreak);
+    if (!inBreak) this.buildMenu.close();
   }
 
   handleEvents(events) {
@@ -117,6 +141,7 @@ export class Game extends Phaser.Scene {
         case 'kill':
           this.explode(e.x, e.y);
           sfx.play('explosion');
+          if (e.by === 'typing') this.guide?.noteTypedKill();
           break;
         case 'coins':
           this.floatCoins(e.x, e.y, e.amount);
@@ -126,6 +151,16 @@ export class Game extends Phaser.Scene {
           this.hud.flashHearts();
           this.mapView.flashBase();
           sfx.play('leak');
+          break;
+        case 'fire':
+          sfx.play(e.towerType);
+          break;
+        case 'hit':
+          if (e.splash) this.explode(e.x, e.y, 0.6);
+          break;
+        case 'chill':
+          this.puff(e.x, e.y);
+          sfx.play('freeze');
           break;
         case 'waveCleared':
           this.refreshPhaseUi();
@@ -169,6 +204,7 @@ export class Game extends Phaser.Scene {
   pause() {
     if (this.halted || this.closeModal || this.run.phase === 'won') return;
     this.halted = true;
+    this.buildMenu.close();
     this.tweens.pauseAll();
     this.anims.pauseAll();
     this.closeModal = showModal(this, {
@@ -218,6 +254,48 @@ export class Game extends Phaser.Scene {
     }
   }
 
+  syncTowers() {
+    const sheets = this.registry.get('sheets');
+    const simTowers = this.run.world?.towers ?? [];
+    for (const [pad, tower] of Object.entries(this.run.towers)) {
+      let view = this.towerViews.get(pad);
+      if (!view) {
+        const index = Number(pad);
+        view = new TowerView(this, { pos: this.mapView.padPosition(index), sheets, onClick: () => this.onPadClick(index) });
+        this.towerViews.set(pad, view);
+      }
+      view.sync(tower, simTowers.find((t) => t.pad === Number(pad)) ?? null);
+    }
+    for (const [pad, view] of this.towerViews) {
+      if (!this.run.towers[pad]) {
+        view.destroy();
+        this.towerViews.delete(pad);
+      }
+    }
+  }
+
+  syncProjectiles() {
+    const world = this.run.world;
+    const alive = new Set();
+    for (const p of world?.projectiles ?? []) {
+      alive.add(p.id);
+      let view = this.projectileViews.get(p.id);
+      if (!view) {
+        view = this.add.image(p.x, p.y, p.towerType === 'rocket' ? 'rocket-shell' : 'bolt').setDepth(15000);
+        this.projectileViews.set(p.id, view);
+      }
+      const target = world.aliens.find((a) => a.id === p.targetId);
+      if (target) view.setRotation(Math.atan2(target.y - p.y, target.x - p.x));
+      view.setPosition(p.x, p.y);
+    }
+    for (const [id, view] of this.projectileViews) {
+      if (!alive.has(id)) {
+        view.destroy();
+        this.projectileViews.delete(id);
+      }
+    }
+  }
+
   fireLaser(id) {
     const view = this.alienViews.get(id);
     if (!view) return;
@@ -232,6 +310,11 @@ export class Game extends Phaser.Scene {
     const fx = this.add.sprite(x, y, 'fx-explosion').setDepth(16000).setScale(scale);
     fx.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => fx.destroy());
     fx.play('fx-explosion-explode-south');
+  }
+
+  puff(x, y) {
+    const frost = this.add.image(x, y, 'freeze-puff').setDepth(15500).setAlpha(0.9);
+    this.tweens.add({ targets: frost, scale: 1.5, alpha: 0, duration: 600, onComplete: () => frost.destroy() });
   }
 
   floatCoins(x, y, amount) {
