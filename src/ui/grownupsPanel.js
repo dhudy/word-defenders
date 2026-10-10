@@ -33,10 +33,18 @@ export function openGrownupsPanel({ save, persistent, onSave, onReset, onClose }
   const status = (text) => {
     $('gw-status').textContent = text;
   };
+  const formState = () =>
+    JSON.stringify([
+      $('gw-words').value,
+      root.querySelector('input[name="gw-speed"]:checked').value,
+      $('gw-sound').checked,
+    ]);
   $('gw-words').value = save.words.join('\n');
   root.querySelector(`input[name="gw-speed"][value="${save.settings.speed}"]`).checked = true;
   $('gw-sound').checked = save.settings.sound;
   $('gw-storage').hidden = persistent;
+  // The form as last loaded or saved; Back asks before dropping changes since then.
+  let savedState = formState();
 
   $('gw-save').addEventListener('click', () => {
     const { words, errors } = parseWordList($('gw-words').value);
@@ -54,6 +62,7 @@ export function openGrownupsPanel({ save, persistent, onSave, onReset, onClose }
     const speed = root.querySelector('input[name="gw-speed"]:checked').value;
     const stored = onSave({ words, settings: { speed, sound: $('gw-sound').checked } });
     $('gw-words').value = words.join('\n');
+    savedState = formState();
     status(stored ? 'Saved!' : STORAGE_BLOCKED);
   });
 
@@ -62,7 +71,10 @@ export function openGrownupsPanel({ save, persistent, onSave, onReset, onClose }
     status(onReset() ? 'Progress reset.' : STORAGE_BLOCKED);
   });
 
-  $('gw-back').addEventListener('click', onClose);
+  $('gw-back').addEventListener('click', () => {
+    if (formState() !== savedState && !window.confirm('Leave without saving your changes?')) return;
+    onClose();
+  });
   root.hidden = false;
   $('gw-words').focus();
   // Focusing puts the caret at the end; show the list from its first word.
