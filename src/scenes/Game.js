@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import * as Run from '../logic/game.js';
-import { readKeyEvent } from '../logic/typing.js';
+import { normalizeKey, readKeyEvent } from '../logic/typing.js';
 import { lockableAliens } from '../logic/world.js';
 import { basePosition, GAME_WIDTH } from '../logic/map.js';
 import { layoutLabels } from '../logic/labels.js';
@@ -87,16 +87,16 @@ export class Game extends Phaser.Scene {
     // Phaser re-emits a frame's earlier key events when 3+ arrive in one frame; handle each event once.
     if (this.seenKeys.has(event)) return;
     this.seenKeys.add(event);
-    if (this.halted) return;
     const pressed = readKeyEvent(event);
+    // Typing keys never reach the browser in any phase (Firefox Quick Find opens on ' and /).
+    if (normalizeKey(pressed) !== null) event.preventDefault();
+    if (this.halted) return;
     if (pressed === null) return;
     if (pressed === 'Escape' && this.buildMenu.isOpen) {
       this.buildMenu.close();
       return;
     }
-    const { handled, events } = Run.key(this.run, pressed);
-    if (handled) event.preventDefault();
-    this.handleEvents(events);
+    this.handleEvents(Run.key(this.run, pressed).events);
   }
 
   onStartWave() {
