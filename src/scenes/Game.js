@@ -2,7 +2,8 @@ import * as Phaser from 'phaser';
 import * as Run from '../logic/game.js';
 import { readKeyEvent } from '../logic/typing.js';
 import { lockableAliens } from '../logic/world.js';
-import { basePosition } from '../logic/map.js';
+import { basePosition, GAME_WIDTH } from '../logic/map.js';
+import { layoutLabels } from '../logic/labels.js';
 import { SPEEDS, recordResult } from '../logic/save.js';
 import { createRng } from '../logic/rng.js';
 import { app, updateSave } from '../app.js';
@@ -11,7 +12,8 @@ import { setupCamera, markReady } from '../ui/view.js';
 import { addText, COLORS, FILLS } from '../ui/text.js';
 import { addButton } from '../ui/button.js';
 import { showModal } from '../ui/modal.js';
-import { AlienView } from '../objects/AlienView.js';
+import { AlienView, LABEL_MIN_Y } from '../objects/AlienView.js';
+import { LABEL_HEIGHT } from '../objects/WordLabel.js';
 import { TowerView } from '../objects/TowerView.js';
 import { MapView } from './game/MapView.js';
 import { Hud } from './game/Hud.js';
@@ -241,6 +243,7 @@ export class Game extends Phaser.Scene {
 
   syncAliens() {
     const alive = new Set();
+    const items = [];
     for (const alien of this.run.world?.aliens ?? []) {
       alive.add(alien.id);
       let view = this.alienViews.get(alien.id);
@@ -249,12 +252,22 @@ export class Game extends Phaser.Scene {
         this.alienViews.set(alien.id, view);
       }
       view.sync(alien, this.run.typing);
+      items.push(view.labelItem);
     }
     for (const [id, view] of this.alienViews) {
       if (!alive.has(id)) {
         view.destroy();
         this.alienViews.delete(id);
       }
+    }
+    // Lay out every shown word bubble together so none covers another.
+    const placed = layoutLabels(
+      items.filter((item) => item.width > 0),
+      { minY: LABEL_MIN_Y, minX: 4, maxX: GAME_WIDTH - 4, rowHeight: LABEL_HEIGHT },
+    );
+    for (const item of items) {
+      const pos = placed.get(item.id) ?? { x: item.x, y: Math.max(item.y, LABEL_MIN_Y) };
+      this.alienViews.get(item.id).placeLabel(pos.x, pos.y, item.priority);
     }
   }
 

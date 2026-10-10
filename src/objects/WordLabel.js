@@ -1,7 +1,7 @@
 import { addText, COLORS, FONTS, FILLS } from '../ui/text.js';
 
 const PAD_X = 10;
-const HEIGHT = 38;
+export const LABEL_HEIGHT = 38;
 const STYLE = { fontFamily: FONTS.word, fontSize: '26px' };
 
 // Word bubble above an alien. While locked: typed letters green, the next
@@ -11,6 +11,7 @@ export class WordLabel {
     this.scene = scene;
     this.offset = { x: 0 };
     this.stateKey = null;
+    this.boxWidth = 0;
     this.container = scene.add.container(0, 0).setDepth(10000);
     this.bg = scene.add.graphics();
     this.typed = addText(scene, 0, 0, '', { ...STYLE, color: COLORS.typed }).setOrigin(0, 0.5);
@@ -26,6 +27,7 @@ export class WordLabel {
     if (stateKey === this.stateKey) return;
     this.stateKey = stateKey;
     this.container.setVisible(word !== null);
+    this.boxWidth = 0;
     if (word === null) return;
 
     const split = locked ? typedCount : 0;
@@ -34,6 +36,7 @@ export class WordLabel {
     this.rest.setText(word.slice(locked ? split + 1 : 0));
 
     const width = this.typed.width + this.next.width + this.rest.width;
+    this.boxWidth = width + PAD_X * 2;
     let x = -width / 2;
     this.typed.setX(x);
     x += this.typed.width;
@@ -44,10 +47,15 @@ export class WordLabel {
 
     const left = -width / 2 - PAD_X;
     this.bg.clear();
-    this.bg.fillStyle(FILLS.panel, 0.9).fillRoundedRect(left, -HEIGHT / 2, width + PAD_X * 2, HEIGHT, 10);
-    if (locked) this.bg.lineStyle(3, 0xffd23f, 1).strokeRoundedRect(left, -HEIGHT / 2, width + PAD_X * 2, HEIGHT, 10);
+    this.bg.fillStyle(FILLS.panel, 0.9).fillRoundedRect(left, -LABEL_HEIGHT / 2, width + PAD_X * 2, LABEL_HEIGHT, 10);
+    if (locked) this.bg.lineStyle(3, 0xffd23f, 1).strokeRoundedRect(left, -LABEL_HEIGHT / 2, width + PAD_X * 2, LABEL_HEIGHT, 10);
     this.underline.clear();
     if (locked && this.next.width > 0) this.underline.fillStyle(0xffd23f, 1).fillRect(nextX, 13, this.next.width, 3);
+  }
+
+  // Full bubble width (text plus padding); 0 while hidden.
+  get width() {
+    return this.boxWidth;
   }
 
   setPosition(x, y, depth) {
