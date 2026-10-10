@@ -1,0 +1,18 @@
+{
+  "output": "public/assets/sprites/tower-rocket-2",
+  "rows": [
+    {
+      "type": "rotations",
+      "frames": [
+        { "direction": "east", "file": "east.png" },
+        { "direction": "south-east", "file": "south-east.png" },
+        { "direction": "south", "file": "south.png" },
+        { "direction": "south-west", "file": "south-west.png" },
+        { "direction": "west", "file": "west.png" },
+        { "direction": "north-west", "file": "north-west.png" },
+        { "direction": "north", "file": "north.png" },
+        { "direction": "north-east", "file": "north-east.png" }
+      ]
+    }
+  ]
+}

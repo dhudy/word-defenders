@@ -1,0 +1,27 @@
+{
+  "spritesheet": {
+    "cell_size": {
+      "width": 68,
+      "height": 68
+    },
+    "columns": 8,
+    "pivot": "cell-center",
+    "rows": [
+      {
+        "row": 0,
+        "type": "rotations",
+        "frame_count": 8,
+        "directions": [
+          "east",
+          "south-east",
+          "south",
+          "south-west",
+          "west",
+          "north-west",
+          "north",
+          "north-east"
+        ]
+      }
+    ]
+  }
+}
