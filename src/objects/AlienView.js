@@ -8,6 +8,16 @@ export const LABEL_MIN_Y = 86;
 // Label priority (and depth above 10000) of the locked alien: above any path
 // distance (the longest path is 1856 px), below projectiles at depth 15000.
 const LOCKED_PRIORITY = 3000;
+// Glowing ring under the locked alien's feet: its centre below the sprite's
+// centre and its width (about 2/3 of the art's visible width), per sprite.
+const RINGS = {
+  'alien-blob': { y: 26, width: 20 },
+  'alien-zoomer': { y: 27, width: 20 },
+  'alien-chonk': { y: 34, width: 28 },
+  'alien-boss': { y: 58, width: 50 },
+  'alien-boss-2': { y: 65, width: 40 },
+};
+const RING_COLOR = 0xffd23f;
 
 export class AlienView {
   constructor(scene, alien, missionId) {
@@ -16,6 +26,12 @@ export class AlienView {
     this.labelOffset = LABEL_OFFSETS[alien.type];
     this.dir = null;
     this.sprite = scene.add.sprite(alien.x, alien.y, this.spriteKey);
+    this.ringSpec = RINGS[this.spriteKey];
+    this.ring = scene.add.graphics().setVisible(false);
+    const { width } = this.ringSpec;
+    this.ring.lineStyle(5, RING_COLOR, 0.35).strokeEllipse(0, 0, width + 2, width * 0.4 + 2);
+    this.ring.lineStyle(2, RING_COLOR, 1).strokeEllipse(0, 0, width, width * 0.4);
+    this.ringPulse = scene.tweens.add({ targets: this.ring, alpha: 0.55, yoyo: true, repeat: -1, duration: 450 });
     this.hpBar = scene.add.graphics();
     this.label = new WordLabel(scene);
     this.shields = alien.type === 'boss' ? new ShieldView(scene) : null;
@@ -32,6 +48,7 @@ export class AlienView {
     else this.sprite.clearTint();
 
     const locked = typing.targetId === alien.id;
+    this.ring.setVisible(locked).setPosition(alien.x, alien.y + this.ringSpec.y).setDepth(alien.y - 1);
     this.label.set(alien.word, locked ? typing.index : 0, locked);
     this.shields?.sync(alien, alien.y);
     this.alien = alien;
@@ -67,6 +84,8 @@ export class AlienView {
   }
 
   destroy() {
+    this.ringPulse.remove();
+    this.ring.destroy();
     this.sprite.destroy();
     this.hpBar.destroy();
     this.label.destroy();
