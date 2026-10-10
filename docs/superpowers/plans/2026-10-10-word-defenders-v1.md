@@ -6098,6 +6098,9 @@ export function openGrownupsPanel({ save, persistent, onSave, onReset, onClose }
   $('gw-back').addEventListener('click', onClose);
   root.hidden = false;
   $('gw-words').focus();
+  // Focusing puts the caret at the end; show the list from its first word.
+  $('gw-words').setSelectionRange(0, 0);
+  $('gw-words').scrollTop = 0;
 
   return function close() {
     root.hidden = true;
