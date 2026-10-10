@@ -28,10 +28,11 @@ describe('parseWordList', () => {
   });
 
   it('accepts Windows line endings and curly apostrophes from pasted documents', () => {
-    const { words, errors } = parseWordList('don’t\r\ncan’t\r\nit’s\r\nhouse\r\nwater');
+    const { words, errors } = parseWordList('don’t\r\ncan‘t\r\nit’s\r\nhouse\r\nwater');
     expect(errors).toEqual([]);
-    expect(words).toEqual(['don\'t', 'can\'t', 'it\'s', 'house', 'water']);
+    expect(words).toEqual(["don't", "can't", "it's", 'house', 'water']);
   });
+
 
   it('accepts hyphens and one-letter words', () => {
     const { words, errors } = parseWordList('a\nI\nice-cream\nhouse\nwater');
