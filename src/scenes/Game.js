@@ -41,6 +41,7 @@ export class Game extends Phaser.Scene {
     });
     this.halted = false;
     this.closeModal = null;
+    this.seenKeys = new WeakSet();
     this.alienViews = new Map();
     this.towerViews = new Map();
     this.projectileViews = new Map();
@@ -81,6 +82,9 @@ export class Game extends Phaser.Scene {
   }
 
   onKey(event) {
+    // Phaser re-emits a frame's earlier key events when 3+ arrive in one frame; handle each event once.
+    if (this.seenKeys.has(event)) return;
+    this.seenKeys.add(event);
     if (this.halted) return;
     const pressed = readKeyEvent(event);
     if (pressed === null) return;

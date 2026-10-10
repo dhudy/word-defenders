@@ -4,6 +4,7 @@
 //   --do "type:because" --do "key:Escape" --do "typefirst" --do "typefirst:2" --do "scene:Game" --do "shot:.shots/x.png"
 //   --do "fill:#gw-words|cat\ndog" --do "tap:#gw-save"   (DOM elements; \n in fill text becomes a newline)
 //   --do "until:__debug?.run.phase === 'won'"   (wait up to 300 s for a page expression to be truthy)
+//   --do "burst:abc"   (keydown + keyup for each character, all dispatched on window within one frame)
 // Click coordinates are logical game coordinates (1024x576). Browser dialogs are accepted.
 // Exits 1 on any console error.
 import { chromium } from 'playwright';
@@ -51,6 +52,17 @@ try {
       const word = await page.evaluate(() => globalThis.__debug?.firstWord?.() ?? '');
       if (!word) throw new Error('typefirst: no typeable alien on screen');
       await page.keyboard.type(arg ? word.slice(0, Number(arg)) : word, { delay: 60 });
+    } else if (verb === 'burst') {
+      // One evaluate call, so every event lands before the next animation frame.
+      await page.evaluate((text) => {
+        for (const ch of text) {
+          for (const type of ['keydown', 'keyup']) {
+            const event = new KeyboardEvent(type, { key: ch, bubbles: true, cancelable: true });
+            Object.defineProperty(event, 'keyCode', { get: () => ch.toUpperCase().charCodeAt(0) });
+            window.dispatchEvent(event);
+          }
+        }
+      }, arg);
     } else if (verb === 'scene') {
       await waitForScene(page, arg);
     } else if (verb === 'until') {
