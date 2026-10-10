@@ -88,7 +88,7 @@ export class Game extends Phaser.Scene {
     if (this.seenKeys.has(event)) return;
     this.seenKeys.add(event);
     const pressed = readKeyEvent(event);
-    // Typing keys never reach the browser in any phase (Firefox Quick Find opens on ' and /).
+    // Typing keys never reach the browser in any phase (Firefox's Quick Find opens on ').
     if (normalizeKey(pressed) !== null) event.preventDefault();
     if (this.halted) return;
     if (pressed === null) return;
