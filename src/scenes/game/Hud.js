@@ -31,6 +31,8 @@ export class Hud {
   }
 
   flashHearts() {
+    this.scene.tweens.killTweensOf(this.heart);
+    this.heart.setScale(1);
     this.scene.tweens.add({ targets: this.heart, scale: 1.5, yoyo: true, duration: 120 });
   }
 }
