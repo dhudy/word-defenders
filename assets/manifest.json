@@ -33,7 +33,7 @@
     "alien-blob": { "tool": "create_character + animate_character", "id": "cdd04155-935a-48bb-bb4c-2f0e3f8db599", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-blob.png", "public/assets/sprites/alien-blob.json"] },
     "alien-zoomer": { "tool": "create_character + animate_character", "id": "2f3f2038-1f07-486c-b3eb-4c37db01ad1e", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-zoomer.png", "public/assets/sprites/alien-zoomer.json"] },
     "alien-chonk": { "tool": "create_character + animate_character", "id": "61e686a3-4b82-42f1-959f-b80a45407484", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-chonk.png", "public/assets/sprites/alien-chonk.json"] },
-    "alien-boss": { "tool": "create_character + animate_character", "id": "98dbe094-a8c5-4566-9caa-270b9ec366f7", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-boss.png", "public/assets/sprites/alien-boss.json"] },
+    "alien-boss": { "tool": "create_character + animate_character", "id": "98dbe094-a8c5-4566-9caa-270b9ec366f7", "animation": "walking-8-frames as walk", "post": "north walk frames 5-8 replaced by horizontal mirrors of frames 1-4 so the crown stays on; the PixelLab character now holds a later 6-frame retry walk, not this one", "files": ["public/assets/sprites/alien-boss.png", "public/assets/sprites/alien-boss.json"] },
     "alien-boss-2": { "tool": "create_character + animate_character", "id": "f1f7a2b9-be81-4b36-a7c4-8cea783b97a7", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-boss-2.png", "public/assets/sprites/alien-boss-2.json"] }
   }
 }
