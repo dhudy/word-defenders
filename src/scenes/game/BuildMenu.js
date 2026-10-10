@@ -36,13 +36,15 @@ export class BuildMenu {
     const y = clamp(preferred, HUD_BOTTOM + height / 2 + 4, GAME_HEIGHT - height / 2 - 4);
 
     this.container = this.scene.add.container(x, y).setDepth(DEPTH);
+    // Swallows clicks on the heading and between rows so they never reach pads underneath.
+    const blocker = this.scene.add.zone(0, 0, WIDTH, height).setInteractive();
     const bg = this.scene.add.graphics();
     bg.fillStyle(FILLS.panel, 0.96).fillRoundedRect(-WIDTH / 2, -height / 2, WIDTH, height, 14);
     bg.lineStyle(2, FILLS.panelEdge, 1).strokeRoundedRect(-WIDTH / 2, -height / 2, WIDTH, height, 14);
     const title = tower ? `${TOWERS[tower.type].name.toUpperCase()} LV ${tower.level}` : 'BUILD';
     const heading = addText(this.scene, -WIDTH / 2 + 14, -height / 2 + 24, title).setOrigin(0, 0.5);
     const close = addButton(this.scene, WIDTH / 2 - 26, -height / 2 + 24, 'X', () => this.close(), { width: 34, height: 30, fill: FILLS.quiet });
-    this.container.add([bg, heading, close]);
+    this.container.add([blocker, bg, heading, close]);
 
     items.forEach((item, i) => {
       const button = addButton(this.scene, 0, -height / 2 + HEADER + i * ROW + ROW / 2 - 4, item.label, item.onClick, {
