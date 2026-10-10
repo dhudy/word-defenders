@@ -116,6 +116,22 @@ describe('waves', () => {
     expect(run.world.aliens[0].distance - before).toBeLessThan(10);
   });
 
+  it('survives a non-finite frame time without corrupting alien positions', () => {
+    const run = newGame();
+    startWave(run);
+    stepUntil(run, () => run.world.aliens.length > 0);
+    const before = run.world.aliens[0].distance;
+    expect(() => update(run, NaN)).not.toThrow();
+    expect(run.world.aliens[0].distance).toBe(before);
+    expect(() => update(run, Infinity)).not.toThrow();
+    for (const alien of run.world.aliens) {
+      expect(Number.isFinite(alien.distance)).toBe(true);
+      expect(Number.isFinite(alien.x)).toBe(true);
+      expect(Number.isFinite(alien.y)).toBe(true);
+    }
+    expect(run.world.aliens[0].distance - before).toBeLessThan(10);
+  });
+
   it('clears a fully typed wave with a 10-coin bonus and moves to the next break', () => {
     const run = newGame();
     startWave(run);

@@ -86,7 +86,7 @@ export function startWave(run) {
 
 export function update(run, dt) {
   if (run.phase !== 'wave') return [];
-  const step = Math.min(Math.max(dt, 0), MAX_STEP);
+  const step = Number.isFinite(dt) ? Math.min(Math.max(dt, 0), MAX_STEP) : 0;
   const events = absorb(run, stepWorld(run.world, step));
   if (run.phase === 'wave') {
     const sync = syncTyping(run.typing, lockableAliens(run.world));
