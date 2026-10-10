@@ -1,0 +1,18 @@
+{"tileset_data":{"tile_size":{"width":32,"height":32},"spritesheet_grid":{"cols":4,"rows":4},"tiles":[
+    {"corners":{"NW":"upper","NE":"upper","SW":"lower","SE":"upper"},"bounding_box":{"x":0,"y":0,"width":32,"height":32}},
+    {"corners":{"NW":"upper","NE":"lower","SW":"upper","SE":"lower"},"bounding_box":{"x":32,"y":0,"width":32,"height":32}},
+    {"corners":{"NW":"lower","NE":"upper","SW":"lower","SE":"lower"},"bounding_box":{"x":64,"y":0,"width":32,"height":32}},
+    {"corners":{"NW":"upper","NE":"upper","SW":"lower","SE":"lower"},"bounding_box":{"x":96,"y":0,"width":32,"height":32}},
+    {"corners":{"NW":"lower","NE":"upper","SW":"upper","SE":"lower"},"bounding_box":{"x":0,"y":32,"width":32,"height":32}},
+    {"corners":{"NW":"upper","NE":"lower","SW":"lower","SE":"lower"},"bounding_box":{"x":32,"y":32,"width":32,"height":32}},
+    {"corners":{"NW":"lower","NE":"lower","SW":"lower","SE":"lower"},"bounding_box":{"x":64,"y":32,"width":32,"height":32}},
+    {"corners":{"NW":"lower","NE":"lower","SW":"lower","SE":"upper"},"bounding_box":{"x":96,"y":32,"width":32,"height":32}},
+    {"corners":{"NW":"upper","NE":"lower","SW":"upper","SE":"upper"},"bounding_box":{"x":0,"y":64,"width":32,"height":32}},
+    {"corners":{"NW":"lower","NE":"lower","SW":"upper","SE":"upper"},"bounding_box":{"x":32,"y":64,"width":32,"height":32}},
+    {"corners":{"NW":"lower","NE":"lower","SW":"upper","SE":"lower"},"bounding_box":{"x":64,"y":64,"width":32,"height":32}},
+    {"corners":{"NW":"lower","NE":"upper","SW":"lower","SE":"upper"},"bounding_box":{"x":96,"y":64,"width":32,"height":32}},
+    {"corners":{"NW":"upper","NE":"upper","SW":"upper","SE":"upper"},"bounding_box":{"x":0,"y":96,"width":32,"height":32}},
+    {"corners":{"NW":"upper","NE":"upper","SW":"upper","SE":"lower"},"bounding_box":{"x":32,"y":96,"width":32,"height":32}},
+    {"corners":{"NW":"upper","NE":"lower","SW":"lower","SE":"upper"},"bounding_box":{"x":64,"y":96,"width":32,"height":32}},
+    {"corners":{"NW":"lower","NE":"upper","SW":"upper","SE":"upper"},"bounding_box":{"x":96,"y":96,"width":32,"height":32}}
+  ]}}

@@ -1,0 +1,18 @@
+{
+  "character": { "id": "cdd04155-935a-48bb-bb4c-2f0e3f8db599", "name": "Idle", "size": { "width": 92, "height": 92 }, "directions": 4, "view": "low top-down" },
+  "spritesheet": {
+    "path": "Blob_candidate_A-Idle.png",
+    "cell_size": { "width": 92, "height": 92 },
+    "sheet_size": { "width": 736, "height": 460 },
+    "columns": 8,
+    "pivot": "cell-center",
+    "rows": [
+      { "row": 0, "type": "rotations", "frame_count": 4, "directions": ["south", "west", "east", "north"] },
+      { "row": 1, "type": "animation", "frame_count": 8, "animation": "walk", "direction": "south" },
+      { "row": 2, "type": "animation", "frame_count": 8, "animation": "walk", "direction": "west" },
+      { "row": 3, "type": "animation", "frame_count": 8, "animation": "walk", "direction": "east" },
+      { "row": 4, "type": "animation", "frame_count": 8, "animation": "walk", "direction": "north" }
+    ]
+  },
+  "export_version": "1.0"
+}
