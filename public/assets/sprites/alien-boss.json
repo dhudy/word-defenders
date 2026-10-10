@@ -1,0 +1,73 @@
+{
+  "character": {
+    "id": "98dbe094-a8c5-4566-9caa-270b9ec366f7",
+    "name": "Idle",
+    "prompt": "giant purple alien commander with a flowing cape and a crown, four arms, cute but a little scary, cartoon style",
+    "size": {
+      "width": 180,
+      "height": 180
+    },
+    "directions": 4,
+    "view": "low top-down"
+  },
+  "spritesheet": {
+    "path": "Boss_candidate_A-Idle.png",
+    "cell_size": {
+      "width": 180,
+      "height": 180
+    },
+    "sheet_size": {
+      "width": 1440,
+      "height": 900
+    },
+    "columns": 8,
+    "pivot": "cell-center",
+    "rows": [
+      {
+        "row": 0,
+        "type": "rotations",
+        "frame_count": 4,
+        "directions": [
+          "south",
+          "west",
+          "east",
+          "north"
+        ]
+      },
+      {
+        "row": 1,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "30b7ed1e-df9b-40a6-bdc8-b31798d77f59",
+        "direction": "south"
+      },
+      {
+        "row": 2,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "30b7ed1e-df9b-40a6-bdc8-b31798d77f59",
+        "direction": "west"
+      },
+      {
+        "row": 3,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "30b7ed1e-df9b-40a6-bdc8-b31798d77f59",
+        "direction": "east"
+      },
+      {
+        "row": 4,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "30b7ed1e-df9b-40a6-bdc8-b31798d77f59",
+        "direction": "north"
+      }
+    ]
+  },
+  "export_version": "1.0",
+  "export_date": "2026-10-10T15:19:09.242466+00:00"
+}

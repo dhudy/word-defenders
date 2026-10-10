@@ -5,7 +5,7 @@
     "chonk": { "a": "baa86486-fd1f-4fd0-a390-230af00893b2", "b": "61e686a3-4b82-42f1-959f-b80a45407484", "c": "d1164e48-0d02-4d0c-a962-5615781ba4bb" },
     "boss": { "a": "98dbe094-a8c5-4566-9caa-270b9ec366f7", "b": "107d3aed-73f4-474b-b3b3-7f7ad7498c09", "c": "f1f7a2b9-be81-4b36-a7c4-8cea783b97a7" }
   },
-  "picks": {},
+  "picks": { "blob": "a", "zoomer": "a", "chonk": "b", "boss": "a", "boss2": "c" },
   "assets": {
     "terrain": { "tool": "create_topdown_tileset", "id": "9da86472-df41-43ac-93b9-ef502a710b59", "lower": "smooth tan cobblestone path", "upper": "bright teal alien grass with tiny pink flowers", "files": ["public/assets/terrain/terrain.png", "public/assets/terrain/terrain.json"] },
     "pad": { "tool": "create_1_direction_object", "id": "4ff9578d-6b59-412c-bfef-dd22e052d19c", "prompt": "round metal tower build pad, flat sci-fi platform with a glowing blue rim, seen from above", "files": ["public/assets/images/pad.png"] },
@@ -29,6 +29,11 @@
     "rocket-shell": { "tool": "create_image_pixflux", "id": "572a2e8b-3cf6-45fb-8553-7ca3c767488b", "prompt": "small red and white cartoon missile pointing right with a little flame", "size": "32x32", "files": ["public/assets/images/rocket-shell.png"] },
     "freeze-puff": { "tool": "create_image_pixflux", "id": "579688cd-e0c9-492c-96e4-4f4593a823db", "prompt": "small puff of icy blue frost with snowflake sparkles", "size": "64x64", "files": ["public/assets/images/freeze-puff.png"] },
     "fx-explosion": { "tool": "create_image_pixflux + animate_image", "ids": ["5f4c89c4-e24f-4e82-844a-68e7682b0ce6", "be976071-2b2d-4812-9962-73ef56c5a0dd"], "prompt": "cartoon explosion burst, orange and yellow with white center, small; explosion bursting outward then fading into small puffs of smoke", "files": ["public/assets/sprites/fx-explosion.png", "public/assets/sprites/fx-explosion.json"] },
-    "pixel-ui": { "tool": "create_font", "id": "c86e911d-5a29-44cb-acfc-cd720b074ffc", "prompt": "chunky friendly space arcade font, white with a dark outline", "files": ["public/assets/fonts/pixel-ui.ttf"] }
+    "pixel-ui": { "tool": "create_font", "id": "c86e911d-5a29-44cb-acfc-cd720b074ffc", "prompt": "chunky friendly space arcade font, white with a dark outline", "files": ["public/assets/fonts/pixel-ui.ttf"] },
+    "alien-blob": { "tool": "create_character + animate_character", "id": "cdd04155-935a-48bb-bb4c-2f0e3f8db599", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-blob.png", "public/assets/sprites/alien-blob.json"] },
+    "alien-zoomer": { "tool": "create_character + animate_character", "id": "2f3f2038-1f07-486c-b3eb-4c37db01ad1e", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-zoomer.png", "public/assets/sprites/alien-zoomer.json"] },
+    "alien-chonk": { "tool": "create_character + animate_character", "id": "61e686a3-4b82-42f1-959f-b80a45407484", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-chonk.png", "public/assets/sprites/alien-chonk.json"] },
+    "alien-boss": { "tool": "create_character + animate_character", "id": "98dbe094-a8c5-4566-9caa-270b9ec366f7", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-boss.png", "public/assets/sprites/alien-boss.json"] },
+    "alien-boss-2": { "tool": "create_character + animate_character", "id": "f1f7a2b9-be81-4b36-a7c4-8cea783b97a7", "animation": "walking-8-frames as walk", "files": ["public/assets/sprites/alien-boss-2.png", "public/assets/sprites/alien-boss-2.json"] }
   }
 }

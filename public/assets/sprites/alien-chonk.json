@@ -1,0 +1,73 @@
+{
+  "character": {
+    "id": "61e686a3-4b82-42f1-959f-b80a45407484",
+    "name": "Idle",
+    "prompt": "large round purple alien wearing shiny metal armor plates, cute cartoon style",
+    "size": {
+      "width": 112,
+      "height": 112
+    },
+    "directions": 4,
+    "view": "low top-down"
+  },
+  "spritesheet": {
+    "path": "Chonk_candidate_B-Idle.png",
+    "cell_size": {
+      "width": 112,
+      "height": 112
+    },
+    "sheet_size": {
+      "width": 896,
+      "height": 560
+    },
+    "columns": 8,
+    "pivot": "cell-center",
+    "rows": [
+      {
+        "row": 0,
+        "type": "rotations",
+        "frame_count": 4,
+        "directions": [
+          "south",
+          "west",
+          "east",
+          "north"
+        ]
+      },
+      {
+        "row": 1,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "185aadc7-19ac-472b-8771-522fbe3d3c20",
+        "direction": "south"
+      },
+      {
+        "row": 2,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "185aadc7-19ac-472b-8771-522fbe3d3c20",
+        "direction": "west"
+      },
+      {
+        "row": 3,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "185aadc7-19ac-472b-8771-522fbe3d3c20",
+        "direction": "east"
+      },
+      {
+        "row": 4,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "185aadc7-19ac-472b-8771-522fbe3d3c20",
+        "direction": "north"
+      }
+    ]
+  },
+  "export_version": "1.0",
+  "export_date": "2026-10-10T15:13:10.141649+00:00"
+}

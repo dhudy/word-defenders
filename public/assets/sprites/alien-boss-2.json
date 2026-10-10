@@ -1,0 +1,73 @@
+{
+  "character": {
+    "id": "f1f7a2b9-be81-4b36-a7c4-8cea783b97a7",
+    "name": "Idle",
+    "prompt": "big red alien general with glowing eyes and spiky armor, cute but a little scary, cartoon style",
+    "size": {
+      "width": 180,
+      "height": 180
+    },
+    "directions": 4,
+    "view": "low top-down"
+  },
+  "spritesheet": {
+    "path": "Boss_candidate_C-Idle.png",
+    "cell_size": {
+      "width": 180,
+      "height": 180
+    },
+    "sheet_size": {
+      "width": 1440,
+      "height": 900
+    },
+    "columns": 8,
+    "pivot": "cell-center",
+    "rows": [
+      {
+        "row": 0,
+        "type": "rotations",
+        "frame_count": 4,
+        "directions": [
+          "south",
+          "west",
+          "east",
+          "north"
+        ]
+      },
+      {
+        "row": 1,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "7a501fb2-c2f1-4d62-8240-a4f8752c4b5e",
+        "direction": "south"
+      },
+      {
+        "row": 2,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "7a501fb2-c2f1-4d62-8240-a4f8752c4b5e",
+        "direction": "west"
+      },
+      {
+        "row": 3,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "7a501fb2-c2f1-4d62-8240-a4f8752c4b5e",
+        "direction": "east"
+      },
+      {
+        "row": 4,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "7a501fb2-c2f1-4d62-8240-a4f8752c4b5e",
+        "direction": "north"
+      }
+    ]
+  },
+  "export_version": "1.0",
+  "export_date": "2026-10-10T15:20:37.537950+00:00"
+}

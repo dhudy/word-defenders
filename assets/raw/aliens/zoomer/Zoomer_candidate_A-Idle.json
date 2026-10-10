@@ -1,0 +1,73 @@
+{
+  "character": {
+    "id": "2f3f2038-1f07-486c-b3eb-4c37db01ad1e",
+    "name": "Idle",
+    "prompt": "small skinny yellow alien with a jetpack and racing goggles, fast and zippy, cute cartoon style",
+    "size": {
+      "width": 92,
+      "height": 92
+    },
+    "directions": 4,
+    "view": "low top-down"
+  },
+  "spritesheet": {
+    "path": "Zoomer_candidate_A-Idle.png",
+    "cell_size": {
+      "width": 92,
+      "height": 92
+    },
+    "sheet_size": {
+      "width": 736,
+      "height": 460
+    },
+    "columns": 8,
+    "pivot": "cell-center",
+    "rows": [
+      {
+        "row": 0,
+        "type": "rotations",
+        "frame_count": 4,
+        "directions": [
+          "south",
+          "west",
+          "east",
+          "north"
+        ]
+      },
+      {
+        "row": 1,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "b9f23b1d-3ab1-4ee9-903d-c8ef3725fc04",
+        "direction": "south"
+      },
+      {
+        "row": 2,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "b9f23b1d-3ab1-4ee9-903d-c8ef3725fc04",
+        "direction": "west"
+      },
+      {
+        "row": 3,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "b9f23b1d-3ab1-4ee9-903d-c8ef3725fc04",
+        "direction": "east"
+      },
+      {
+        "row": 4,
+        "type": "animation",
+        "frame_count": 8,
+        "animation": "walk",
+        "animation_group_id": "b9f23b1d-3ab1-4ee9-903d-c8ef3725fc04",
+        "direction": "north"
+      }
+    ]
+  },
+  "export_version": "1.0",
+  "export_date": "2026-10-10T15:13:07.191882+00:00"
+}
