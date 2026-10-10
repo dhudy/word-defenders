@@ -8,6 +8,7 @@ import { Preload } from './scenes/Preload.js';
 import { Title } from './scenes/Title.js';
 import { MissionMap } from './scenes/MissionMap.js';
 import { Results } from './scenes/Results.js';
+import { Game } from './scenes/Game.js';
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -17,5 +18,5 @@ new Phaser.Game({
   backgroundColor: '#0b0b1a',
   pixelArt: true,
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  scene: [Boot, Preload, Title, MissionMap, Results],
+  scene: [Boot, Preload, Title, MissionMap, Game, Results],
 });

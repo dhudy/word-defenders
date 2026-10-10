@@ -20,6 +20,6 @@ export const IMAGES = Object.freeze(['pad', 'base', 'portal', 'bg-space', 'coin'
 export const FONT_FILES = Object.freeze({ PixelUI: 'assets/fonts/pixel-ui.ttf' });
 
 // Pixels from an alien's centre up to its word bubble. Tune against the art in Task 19.
-export const LABEL_OFFSETS = Object.freeze({ blob: 40, zoomer: 40, chonk: 48, boss: 100 });
+export const LABEL_OFFSETS = Object.freeze({ blob: 48, zoomer: 50, chonk: 58, boss: 66 });
 
 export const ANIMATION_RATES = Object.freeze({ walk: 10, explode: 18 });
