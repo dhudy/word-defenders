@@ -31,6 +31,7 @@ After any change: `npm test`.
 
 ## Manual checks per screen
 
+- [ ] Boot: with a missing file (rename one image in public/assets/images, then restore it) the game shows "Couldn't load the game — try refreshing." instead of a black screen.
 - [ ] Title: Play and Grown-ups both work; aliens parade across.
 - [ ] Mission Map: completed missions show stars; the next mission unlocks after a win.
 - [ ] Game: typing, wrong-letter wobble, Escape releases a lock, pause button, auto-pause when switching tabs, build/upgrade/sell, Start Wave, retry after losing all hearts.
