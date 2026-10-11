@@ -27,3 +27,7 @@ Open the printed URL. Every push to `main` tests, builds and publishes the game 
 Design: `docs/superpowers/specs/2026-10-07-word-defenders-v1-design.md`. Play-testing: `docs/playtest-checklist.md`. Art comes from PixelLab; `assets/manifest.json` records every prompt and ID.
 
 Fonts: Andika (SIL Open Font License, via `@fontsource/andika`); `PixelUI` generated with PixelLab.
+
+## License
+
+MIT (see `LICENSE`): use, copy, change and share it freely, as long as you keep the copyright notice. This covers the code and the PixelLab art. The Andika font keeps its own SIL Open Font License.
