@@ -2,12 +2,20 @@
 
 A tower-defense spelling game. Aliens march toward your base carrying this week's spelling words; type a word to zap its alien, earn coins, and build towers between waves. Bosses wear shields that only typing can pop.
 
-## Run it
+## Play it
+
+**https://dhudy.github.io/word-defenders/**
+
+It needs a computer with a keyboard (laptop or Chromebook); tablets and phones can't type into it yet.
+
+Grown-ups set the word list from the **Grown-ups** button on the title screen. Words and stars are saved only in that browser on that computer; nothing is sent anywhere.
+
+## Run it locally
 
     npm install
     npm run dev
 
-Open the printed URL. Grown-ups set the word list from the **Grown-ups** button on the title screen.
+Open the printed URL. Every push to `main` tests, builds and publishes the game (`.github/workflows/deploy.yml`).
 
 ## Develop
 
