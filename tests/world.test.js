@@ -141,6 +141,18 @@ describe('zapAlien', () => {
     expect(events.some((e) => e.type === 'fire')).toBe(true);
   });
 
+  it('lets typing finish the boss in a world without shooting towers', () => {
+    const world = createWorld({ path, spawns: [{ type: 'boss', at: 0 }], drawWord: cycle(['x']), bossWords: ['because', 'friend'], typingFinishesBoss: true });
+    stepWorld(world, 0.1);
+    expect(zapAlien(world, 1)).toEqual([{ type: 'shieldPop', id: 1, remaining: 1, x: world.aliens[0].x, y: 0 }]);
+    const { x } = world.aliens[0];
+    expect(zapAlien(world, 1)).toEqual([
+      { type: 'shieldPop', id: 1, remaining: 0, x, y: 0 },
+      { type: 'kill', id: 1, alienType: 'boss', by: 'typing', x, y: 0 },
+    ]);
+    expect(world.aliens).toEqual([]);
+  });
+
   it('does nothing for unknown or wordless aliens', () => {
     const world = createWorld({ path, spawns: [], drawWord: cycle(['x']) });
     expect(zapAlien(world, 42)).toEqual([]);

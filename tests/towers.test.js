@@ -10,14 +10,14 @@ describe('TOWERS', () => {
     expect(TOWERS.blaster.costs).toEqual([20, 15, 25]);
     expect(TOWERS.freeze.costs).toEqual([30, 20, 30]);
     expect(TOWERS.rocket.costs).toEqual([40, 25, 35]);
-    expect(TOWER_TYPES.map((t) => TOWERS[t].firstMission)).toEqual([1, 3, 5]);
+    expect(TOWER_TYPES.map((t) => TOWERS[t].firstMission)).toEqual([3, 1, 5]);
     expect(TOWER_TYPES.map((t) => TOWERS[t].name)).toEqual(['Blaster', 'Freeze Ray', 'Rocket']);
   });
 });
 
 describe('towerStats', () => {
-  it('gives a level-1 blaster 1 damage, 1 shot/s and 3 tiles of range', () => {
-    expect(towerStats('blaster', 1)).toEqual({ range: 96, damage: 1, rate: 1, slow: 0, splash: 0, projectileSpeed: 480 });
+  it('gives a level-1 blaster 1 damage, 1 shot every 2 s and 3 tiles of range', () => {
+    expect(towerStats('blaster', 1)).toEqual({ range: 96, damage: 1, rate: 0.5, slow: 0, splash: 0, projectileSpeed: 480 });
   });
 
   it('adds 50% damage and 10% range per upgrade', () => {
@@ -40,9 +40,12 @@ describe('towerStats', () => {
 });
 
 describe('availableTowers', () => {
-  it('unlocks towers by mission', () => {
-    expect(availableTowers(1)).toEqual(['blaster']);
-    expect(availableTowers(2)).toEqual(['blaster']);
+  it('starts with only the Freeze Ray so typing does the zapping', () => {
+    expect(availableTowers(1)).toEqual(['freeze']);
+    expect(availableTowers(2)).toEqual(['freeze']);
+  });
+
+  it('unlocks the shooting towers in later missions', () => {
     expect(availableTowers(3)).toEqual(['blaster', 'freeze']);
     expect(availableTowers(5)).toEqual(['blaster', 'freeze', 'rocket']);
     expect(availableTowers(10)).toEqual(['blaster', 'freeze', 'rocket']);

@@ -49,24 +49,26 @@ describe('createGame', () => {
 describe('building', () => {
   it('builds an available tower on an empty pad', () => {
     const run = newGame();
-    expect(towerOptions(run)).toEqual(['blaster']);
-    expect(build(run, 0, 'blaster')).toBe(true);
-    expect(run.coins).toBe(10);
-    expect(run.towers).toEqual({ 0: { type: 'blaster', level: 1 } });
+    expect(towerOptions(run)).toEqual(['freeze']);
+    expect(build(run, 0, 'freeze')).toBe(true);
+    expect(run.coins).toBe(0);
+    expect(run.towers).toEqual({ 0: { type: 'freeze', level: 1 } });
   });
 
   it('refuses occupied pads, missing pads, locked towers and empty wallets', () => {
-    const run = newGame();
-    build(run, 0, 'blaster');
-    expect(build(run, 0, 'blaster')).toBe(false);
-    expect(build(run, 99, 'blaster')).toBe(false);
-    expect(build(run, 1, 'freeze')).toBe(false);
+    const run = newGame({ debug: { coins: 999 } });
+    build(run, 0, 'freeze');
+    expect(build(run, 0, 'freeze')).toBe(false);
+    expect(build(run, 99, 'freeze')).toBe(false);
     expect(build(run, 1, 'blaster')).toBe(false);
-    expect(run.coins).toBe(10);
+    expect(run.coins).toBe(969);
+    run.coins = 29;
+    expect(build(run, 1, 'freeze')).toBe(false);
+    expect(run.coins).toBe(29);
   });
 
   it('upgrades and sells with the spec prices', () => {
-    const run = newGame({ debug: { coins: 100 } });
+    const run = newGame({ missionId: 3, debug: { coins: 100 } });
     build(run, 2, 'blaster');
     expect(upgrade(run, 2)).toBe(true);
     expect(upgrade(run, 2)).toBe(true);
@@ -80,7 +82,7 @@ describe('building', () => {
   it('refuses to build during a wave', () => {
     const run = newGame();
     startWave(run);
-    expect(build(run, 0, 'blaster')).toBe(false);
+    expect(build(run, 0, 'freeze')).toBe(false);
   });
 });
 
@@ -154,7 +156,7 @@ describe('waves', () => {
   });
 
   it('releases a lock when a tower kills the locked alien', () => {
-    const run = newGame({ debug: { coins: 999 } });
+    const run = newGame({ missionId: 3, debug: { coins: 999 } });
     for (let pad = 0; pad < 8; pad++) build(run, pad, 'blaster');
     startWave(run);
     stepUntil(run, () => run.world.aliens.length > 0);
@@ -200,18 +202,27 @@ describe('failing and retrying', () => {
 });
 
 describe('boss wave', () => {
-  it('wins the mission when the boss leaks with hearts left', () => {
+  it('lets typing finish the boss while no shooting tower is unlocked', () => {
     const run = newGame({ debug: { wave: 5 } });
     startWave(run);
     const events = playWave(run);
+    expect(events).toContainEqual(expect.objectContaining({ type: 'kill', alienType: 'boss', by: 'typing' }));
+    expect(events).toContainEqual(expect.objectContaining({ type: 'coins', amount: 25 }));
+    expect(events.find((e) => e.type === 'missionWon')).toEqual({ type: 'missionWon', stars: 3, coinsEarned: 3 * 5 + 25 + 10, hearts: 10 });
+  });
+
+  it('wins the mission when the boss leaks with hearts left', () => {
+    const run = newGame({ missionId: 3, debug: { wave: 5 } });
+    startWave(run);
+    const events = playWave(run);
     const won = events.find((e) => e.type === 'missionWon');
-    expect(won).toEqual({ type: 'missionWon', stars: 2, coinsEarned: 3 * 5 + 10, hearts: 5 });
+    expect(won).toEqual({ type: 'missionWon', stars: 2, coinsEarned: 4 * 5 + 10, hearts: 5 });
     expect(events.filter((e) => e.type === 'shieldPop')).toHaveLength(1);
     expect(run.phase).toBe('won');
   });
 
   it('pays 25 coins when towers finish the boss', () => {
-    const run = newGame({ debug: { wave: 5, coins: 999 } });
+    const run = newGame({ missionId: 3, debug: { wave: 5, coins: 999 } });
     for (let pad = 0; pad < 8; pad++) {
       build(run, pad, 'blaster');
       upgrade(run, pad);

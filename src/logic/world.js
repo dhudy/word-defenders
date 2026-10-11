@@ -4,12 +4,14 @@ import { towerStats, pickTarget, slowAt, facingFor } from './towers.js';
 
 const HIT_RADIUS = 8;
 
-export function createWorld({ path, spawns, speed = 1, drawWord, bossWords = [], towers = [] }) {
+// typingFinishesBoss: popping the last shield also kills the boss, for missions with no shooting tower yet.
+export function createWorld({ path, spawns, speed = 1, drawWord, bossWords = [], towers = [], typingFinishesBoss = false }) {
   return {
     path,
     speed,
     drawWord,
     bossWords,
+    typingFinishesBoss,
     time: 0,
     pending: [...spawns].sort((a, b) => a.at - b.at),
     aliens: [],
@@ -47,7 +49,11 @@ export function zapAlien(world, id) {
   if (alien.type === 'boss') {
     alien.shieldIndex += 1;
     alien.word = alien.shieldWords[alien.shieldIndex] ?? null;
-    return [{ type: 'shieldPop', id, remaining: alien.shieldWords.length - alien.shieldIndex, x: alien.x, y: alien.y }];
+    const remaining = alien.shieldWords.length - alien.shieldIndex;
+    const pop = { type: 'shieldPop', id, remaining, x: alien.x, y: alien.y };
+    if (remaining > 0 || !world.typingFinishesBoss) return [pop];
+    removeAlien(world, id);
+    return [pop, { type: 'kill', id, alienType: 'boss', by: 'typing', x: alien.x, y: alien.y }];
   }
   removeAlien(world, id);
   return [{ type: 'kill', id, alienType: alien.type, by: 'typing', x: alien.x, y: alien.y }];

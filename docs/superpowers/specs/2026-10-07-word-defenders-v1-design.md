@@ -6,7 +6,7 @@
 
 ## 1. Purpose
 
-Word Defenders is a browser tower-defense game that helps a 7-year-old practice his weekly spelling words. Aliens march along a path, each carrying a word. Typing a word zaps its alien. Kills earn coins, and between waves he spends them on towers that shoot the aliens he doesn't type. Bosses wear shields that only typing can pop; once the shields are down, the towers finish the boss off.
+Word Defenders is a browser tower-defense game that helps a 7-year-old practice his weekly spelling words. Aliens march along a path, each carrying a word. Typing a word zaps its alien. Kills earn coins, and between waves he spends them on towers: first a Freeze Ray that slows aliens down so he has time to type, then towers that shoot the aliens he doesn't type. Bosses wear shields that only typing can pop; once the shields are down, the towers finish the boss off.
 
 ### Success criteria
 
@@ -144,7 +144,7 @@ Typing kills any regular alien instantly, so HP only matters for towers.
 
 Two boss designs share the same rules: the player picked one for missions 1–5 and another for missions 6–10, so the second half of the game brings a new boss.
 
-The boss carries 1–3 shields. While any shield is up, towers can't damage it. Each shield shows one word. Typing that word pops the shield, releases the lock and reveals the next shield's word. With every shield gone, the boss shows no word and towers finish it.
+The boss carries 1–3 shields. While any shield is up, towers can't damage it. Each shield shows one word. Typing that word pops the shield, releases the lock and reveals the next shield's word. With every shield gone, the boss shows no word and towers finish it. In missions 1–2, before any shooting tower is unlocked, typing the last shield's word defeats the boss instead.
 
 ### Towers
 
@@ -152,14 +152,15 @@ Building, upgrading and selling happen only during the break between waves. The 
 
 | Tower | Role | Cost (L1 / L2 / L3) | First mission |
 |---|---|---|---|
-| Blaster | Single target. 1 damage, 1 shot/s, 3-tile range | 20 / 15 / 25 | 1 |
-| Freeze Ray | Slows every alien in range by 30% / 45% / 60%; no damage; 2.5-tile range | 30 / 20 / 30 | 3 |
+| Freeze Ray | Slows every alien in range by 30% / 45% / 60%; no damage; 2.5-tile range | 30 / 20 / 30 | 1 |
+| Blaster | Single target. 1 damage, 1 shot every 2 s, 3-tile range | 20 / 15 / 25 | 3 |
 | Rocket | 3 splash damage (1-tile radius), 0.4 shots/s, 3.5-tile range | 40 / 25 / 35 | 5 |
 
 - Each upgrade adds 50% damage and 10% range. Freeze Ray upgrades raise the slow, as shown in the table.
 - Towers target the alien in range that is furthest along the path. They skip shielded bosses.
 - Selling refunds 50% of the coins spent on that tower, upgrades included.
 - A tower is available in its first mission and every mission after it.
+- Towers back up typing; they don't replace it. The first tower only slows aliens, and one Level 1 Blaster can't kill a Blob on its own.
 
 ### Coins
 
@@ -181,9 +182,9 @@ Starting values (tuned during play-testing):
 
 | Mission | Speed × | Waves 1–4 | Wave 5 escorts | Spawn gap | Alien mix | Boss shields | New tower |
 |---|---|---|---|---|---|---|---|
-| 1 | 1.00 | 4, 5, 6, 7 | 3 | 4.5 s | Blob | 1 | Blaster |
+| 1 | 1.00 | 4, 5, 6, 7 | 3 | 4.5 s | Blob | 1 | Freeze Ray |
 | 2 | 1.05 | 5, 6, 7, 8 | 3 | 4.3 s | Blob, Zoomer | 1 | — |
-| 3 | 1.10 | 5, 6, 7, 8 | 4 | 4.1 s | Blob, Zoomer | 1 | Freeze Ray |
+| 3 | 1.10 | 5, 6, 7, 8 | 4 | 4.1 s | Blob, Zoomer | 1 | Blaster |
 | 4 | 1.10 | 6, 7, 8, 9 | 4 | 4.0 s | + Chonk | 2 | — |
 | 5 | 1.15 | 6, 7, 8, 9 | 4 | 3.8 s | All | 2 | Rocket |
 | 6 | 1.20 | 6, 8, 9, 10 | 5 | 3.6 s | All | 2 | — |
@@ -196,7 +197,7 @@ Starting values (tuned during play-testing):
 
 ### Guided start
 
-Mission 1's first break shows an arrow to a pad with the text "Build a Blaster here!", then an arrow to **Start Wave**. Replays of mission 1 skip the guide.
+Mission 1's first break shows an arrow to a pad with the text "Build a Freeze Ray here!", then an arrow to **Start Wave**. Replays of mission 1 skip the guide.
 
 ### Hearts, retries and winning
 

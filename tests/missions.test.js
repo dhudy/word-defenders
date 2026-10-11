@@ -37,7 +37,7 @@ describe('MISSIONS', () => {
     expect(MISSIONS.map((m) => m.escorts)).toEqual([3, 3, 4, 4, 4, 5, 5, 6, 6, 6]);
     expect(MISSIONS.map((m) => m.spawnGap)).toEqual([4.5, 4.3, 4.1, 4.0, 3.8, 3.6, 3.5, 3.3, 3.2, 3.0]);
     expect(MISSIONS.map((m) => m.shields)).toEqual([1, 1, 1, 2, 2, 2, 2, 3, 3, 3]);
-    expect(MISSIONS.map((m) => m.newTower)).toEqual(['blaster', null, 'freeze', null, 'rocket', null, null, null, null, null]);
+    expect(MISSIONS.map((m) => m.newTower)).toEqual(['freeze', null, 'blaster', null, 'rocket', null, null, null, null, null]);
   });
 
   it('only mixes in aliens from their first mission onward', () => {

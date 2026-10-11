@@ -3,7 +3,7 @@ import { GAME_WIDTH } from '../../logic/map.js';
 
 const DEPTH = 25000;
 
-// First-time hints for mission 1: build a Blaster, press Start Wave, type a word.
+// First-time hints for mission 1: build a Freeze Ray, press Start Wave, type a word.
 export class Guide {
   constructor(scene, { pad, start }) {
     this.spots = { pad, start };
@@ -35,7 +35,7 @@ export class Guide {
     if (step === this.step) return;
     this.step = step;
     const { pad, start } = this.spots;
-    if (step === 'build') this.show(pad.x, pad.y - 22, 'Build a Blaster here!', pad.x + 40, pad.y - 80);
+    if (step === 'build') this.show(pad.x, pad.y - 22, 'Build a Freeze Ray here!', pad.x + 40, pad.y - 80);
     else if (step === 'start') this.show(start.x, start.y - 30, 'Press Start Wave!', start.x - 60, start.y - 84);
     else if (step === 'type') this.show(null, null, 'Type the word on an alien to zap it!', GAME_WIDTH / 2, 530);
     else this.show(null, null, '', 0, 0);
