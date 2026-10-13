@@ -197,11 +197,14 @@ describe('zapAlien', () => {
     expect(zapAlien(world, 1)).toContainEqual(expect.objectContaining({ type: 'kill', alienType: 'boss', by: 'typing' }));
   });
 
-  it('draws the boss a word whose first letter no other alien shows', () => {
+  it('draws the boss words whose first letter no other alien shows, after a shield and after a hit', () => {
     const drawWord = vi.fn(cycle(['cat', 'dog']));
     const world = createWorld({ path, spawns: [{ type: 'blob', at: 0 }, { type: 'boss', at: 0 }], drawWord, bossWords: ['because'] });
     stepWorld(world, 0.1);
     zapAlien(world, 2);
+    expect(drawWord).toHaveBeenLastCalledWith(new Set(['c']));
+    zapAlien(world, 2);
+    expect(drawWord).toHaveBeenCalledTimes(3);
     expect(drawWord).toHaveBeenLastCalledWith(new Set(['c']));
   });
 
