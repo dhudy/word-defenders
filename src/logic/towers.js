@@ -8,7 +8,7 @@ export const DIRECTIONS_8 = Object.freeze([
 
 // Ranges are in tiles; towerStats converts them to pixels.
 export const TOWERS = Object.freeze({
-  blaster: Object.freeze({ name: 'Blaster', costs: [20, 15, 25], firstMission: 3, range: 3, damage: 1, rate: 0.5, projectileSpeed: 480 }),
+  blaster: Object.freeze({ name: 'Blaster', costs: [20, 15, 25], firstMission: 3, range: 3, damage: 1, rate: 1, projectileSpeed: 480 }),
   freeze: Object.freeze({ name: 'Freeze Ray', costs: [30, 20, 30], firstMission: 1, range: 2.5, slow: [0.3, 0.45, 0.6] }),
   rocket: Object.freeze({ name: 'Rocket', costs: [40, 25, 35], firstMission: 5, range: 3.5, damage: 3, rate: 0.4, splash: 1, projectileSpeed: 300 }),
 });

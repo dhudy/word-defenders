@@ -52,7 +52,7 @@ describe('createSfx', () => {
   it('has a sound for every game moment in the spec', () => {
     expect(SOUND_NAMES).toEqual(expect.arrayContaining([
       'key', 'wrong', 'miss', 'zap', 'blaster', 'freeze', 'rocket', 'explosion', 'coin',
-      'shieldPop', 'bossAlarm', 'leak', 'waveStart', 'victory', 'tryAgain', 'build', 'click',
+      'shieldPop', 'bossAlarm', 'leak', 'waveStart', 'victory', 'tryAgain', 'build', 'click', 'dizzy',
     ]));
   });
 

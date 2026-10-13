@@ -16,8 +16,8 @@ describe('TOWERS', () => {
 });
 
 describe('towerStats', () => {
-  it('gives a level-1 blaster 1 damage, 1 shot every 2 s and 3 tiles of range', () => {
-    expect(towerStats('blaster', 1)).toEqual({ range: 96, damage: 1, rate: 0.5, slow: 0, splash: 0, projectileSpeed: 480 });
+  it('gives a level-1 blaster 1 damage, 1 shot/s and 3 tiles of range', () => {
+    expect(towerStats('blaster', 1)).toEqual({ range: 96, damage: 1, rate: 1, slow: 0, splash: 0, projectileSpeed: 480 });
   });
 
   it('adds 50% damage and 10% range per upgrade', () => {

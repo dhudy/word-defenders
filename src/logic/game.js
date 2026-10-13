@@ -3,7 +3,7 @@ import { buildWave, WAVES_PER_MISSION } from './waves.js';
 import { createDeck, pickBossWords } from './words.js';
 import { createWorld, stepWorld, zapAlien, lockableAliens } from './world.js';
 import { createTyping, pressKey, syncTyping } from './typing.js';
-import { TOWERS, availableTowers } from './towers.js';
+import { availableTowers } from './towers.js';
 import { REWARDS, buildCost, upgradeCost, sellValue, killReward } from './economy.js';
 import { starsFor } from './stars.js';
 import { MAP_1, buildPath, padPositions } from './map.js';
@@ -78,7 +78,6 @@ export function startWave(run) {
     drawWord: (onScreen) => run.deck.draw(onScreen),
     bossWords: isBossWave ? pickBossWords(run.words, run.mission.shields, run.rng) : [],
     towers: Object.entries(run.towers).map(([pad, t]) => ({ pad: Number(pad), type: t.type, level: t.level, ...run.pads[pad] })),
-    typingFinishesBoss: !towerOptions(run).some((type) => TOWERS[type].damage),
   });
   run.phase = 'wave';
   run.typing = createTyping();

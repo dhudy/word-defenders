@@ -4,7 +4,7 @@ import { starsFor } from '../src/logic/stars.js';
 
 describe('REWARDS', () => {
   it('matches the spec', () => {
-    expect(REWARDS).toEqual({ typedKill: 5, towerKill: 2, boss: 25, waveClear: 10, missionStart: 30 });
+    expect(REWARDS).toEqual({ typedKill: 5, boss: 25, waveClear: 10, missionStart: 30 });
   });
 });
 
@@ -26,13 +26,10 @@ describe('costs', () => {
 });
 
 describe('killReward', () => {
-  it('pays more for typing than for towers', () => {
-    expect(killReward({ alienType: 'blob', by: 'typing' })).toBe(5);
-    expect(killReward({ alienType: 'chonk', by: 'tower' })).toBe(2);
-  });
-
-  it('pays 25 for a boss however it dies', () => {
-    expect(killReward({ alienType: 'boss', by: 'tower' })).toBe(25);
+  it('pays 5 for a typed alien and 25 for a boss', () => {
+    expect(killReward({ alienType: 'blob' })).toBe(5);
+    expect(killReward({ alienType: 'chonk' })).toBe(5);
+    expect(killReward({ alienType: 'boss' })).toBe(25);
   });
 });
 

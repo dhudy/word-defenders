@@ -1,17 +1,15 @@
 import { positionAt } from './path.js';
-import { ALIENS, bossHp, baseSpeed } from './aliens.js';
+import { ALIENS, TOWER_HP_FLOOR, DIZZY_SPEED, BOSS_WORD_DAMAGE, bossHp, baseSpeed } from './aliens.js';
 import { towerStats, pickTarget, slowAt, facingFor } from './towers.js';
 
 const HIT_RADIUS = 8;
 
-// typingFinishesBoss: popping the last shield also kills the boss, for missions with no shooting tower yet.
-export function createWorld({ path, spawns, speed = 1, drawWord, bossWords = [], towers = [], typingFinishesBoss = false }) {
+export function createWorld({ path, spawns, speed = 1, drawWord, bossWords = [], towers = [] }) {
   return {
     path,
     speed,
     drawWord,
     bossWords,
-    typingFinishesBoss,
     time: 0,
     pending: [...spawns].sort((a, b) => a.at - b.at),
     aliens: [],
@@ -46,17 +44,33 @@ export function stepWorld(world, dt) {
 export function zapAlien(world, id) {
   const alien = world.aliens.find((a) => a.id === id);
   if (!alien || alien.word === null) return [];
-  if (alien.type === 'boss') {
-    alien.shieldIndex += 1;
-    alien.word = alien.shieldWords[alien.shieldIndex] ?? null;
-    const remaining = alien.shieldWords.length - alien.shieldIndex;
-    const pop = { type: 'shieldPop', id, remaining, x: alien.x, y: alien.y };
-    if (remaining > 0 || !world.typingFinishesBoss) return [pop];
-    removeAlien(world, id);
-    return [pop, { type: 'kill', id, alienType: 'boss', by: 'typing', x: alien.x, y: alien.y }];
-  }
+  if (alien.type === 'boss') return hitBoss(world, alien);
   removeAlien(world, id);
   return [{ type: 'kill', id, alienType: alien.type, by: 'typing', x: alien.x, y: alien.y }];
+}
+
+// A typed word pops the boss's next shield; with the shields down it takes
+// BOSS_WORD_DAMAGE and the boss shows a fresh list word, until a word finishes it.
+function hitBoss(world, boss) {
+  const { id, x, y } = boss;
+  if (isShielded(boss)) {
+    boss.shieldIndex += 1;
+    const remaining = boss.shieldWords.length - boss.shieldIndex;
+    boss.word = remaining > 0 ? boss.shieldWords[boss.shieldIndex] : world.drawWord(lettersOnScreen(world, id));
+    return [{ type: 'shieldPop', id, remaining, x, y }];
+  }
+  boss.hp -= BOSS_WORD_DAMAGE;
+  if (boss.hp <= 0) {
+    removeAlien(world, id);
+    return [{ type: 'kill', id, alienType: 'boss', by: 'typing', x, y }];
+  }
+  boss.word = world.drawWord(lettersOnScreen(world, id));
+  return [{ type: 'bossHit', id, hp: boss.hp, x, y }];
+}
+
+// First letters of the words other aliens show, so a new word can avoid them.
+function lettersOnScreen(world, exceptId = null) {
+  return new Set(world.aliens.filter((a) => a.id !== exceptId && a.word !== null).map((a) => a.word[0].toLowerCase()));
 }
 
 function spawnDue(world, events) {
@@ -83,14 +97,14 @@ function makeAlien(world, type) {
     y: start.y,
     dir: start.dir,
     slow: 0,
+    dizzy: false,
   };
   if (type === 'boss') {
     alien.shieldWords = [...world.bossWords];
-    alien.word = alien.shieldWords[0] ?? null;
+    alien.word = alien.shieldWords[0] ?? world.drawWord(lettersOnScreen(world));
     alien.hp = bossHp(alien.shieldWords.length);
   } else {
-    const onScreen = new Set(world.aliens.filter((a) => a.word !== null).map((a) => a.word[0].toLowerCase()));
-    alien.word = world.drawWord(onScreen);
+    alien.word = world.drawWord(lettersOnScreen(world));
     alien.hp = ALIENS[type].hp;
   }
   alien.maxHp = alien.hp;
@@ -106,7 +120,8 @@ function moveAliens(world, dt, events) {
     const wasSlowed = alien.slow > 0;
     alien.slow = slowAt(alien, freezers);
     if (!wasSlowed && alien.slow > 0) events.push({ type: 'chill', id: alien.id, x: alien.x, y: alien.y });
-    alien.distance += pxPerSecond * ALIENS[alien.type].speed * (1 - alien.slow) * dt;
+    const dizzy = alien.dizzy ? DIZZY_SPEED : 1;
+    alien.distance += pxPerSecond * ALIENS[alien.type].speed * (1 - alien.slow) * dizzy * dt;
     if (alien.distance >= world.path.length) {
       removeAlien(world, alien.id);
       events.push({ type: 'leak', id: alien.id, alienType: alien.type, hearts: ALIENS[alien.type].hearts });
@@ -119,13 +134,18 @@ function moveAliens(world, dt, events) {
   }
 }
 
+function isShielded(alien) {
+  return alien.type === 'boss' && alien.shieldIndex < alien.shieldWords.length;
+}
+
+// Shooters skip shielded bosses and aliens that are already dizzy.
 function isTargetable(alien) {
-  return alien.type !== 'boss' || alien.word === null;
+  return !isShielded(alien) && !alien.dizzy;
 }
 
 function updateTowers(world, dt, events) {
   for (const tower of world.towers) {
-    // Freeze towers aim at anything (slowing is not damage); shooters skip shielded bosses.
+    // Freeze towers aim at anything (slowing is not damage).
     const candidates = tower.type === 'freeze' ? world.aliens : world.aliens.filter(isTargetable);
     const target = pickTarget(tower, tower.stats.range, candidates);
     if (target) tower.facing = facingFor(target.x - tower.x, target.y - tower.y);
@@ -164,7 +184,7 @@ function moveProjectiles(world, dt, events) {
       removeProjectile(world, p.id);
       events.push({ type: 'hit', projectileId: p.id, x: target.x, y: target.y, splash: p.splash > 0 });
       const victims = p.splash > 0
-        ? world.aliens.filter((a) => isTargetable(a) && Math.hypot(a.x - target.x, a.y - target.y) <= p.splash)
+        ? world.aliens.filter((a) => !isShielded(a) && Math.hypot(a.x - target.x, a.y - target.y) <= p.splash)
         : [target];
       for (const victim of victims) damage(world, victim, p.damage, events);
       continue;
@@ -174,12 +194,13 @@ function moveProjectiles(world, dt, events) {
   }
 }
 
+// Towers wear an alien down to TOWER_HP_FLOOR, where it turns dizzy; they never kill.
 function damage(world, alien, amount, events) {
-  if (!world.aliens.includes(alien)) return;
-  alien.hp -= amount;
-  if (alien.hp <= 0) {
-    removeAlien(world, alien.id);
-    events.push({ type: 'kill', id: alien.id, alienType: alien.type, by: 'tower', x: alien.x, y: alien.y });
+  if (!world.aliens.includes(alien) || alien.dizzy) return;
+  alien.hp = Math.max(TOWER_HP_FLOOR, alien.hp - amount);
+  if (alien.hp === TOWER_HP_FLOOR) {
+    alien.dizzy = true;
+    events.push({ type: 'dizzy', id: alien.id, x: alien.x, y: alien.y });
   }
 }
 

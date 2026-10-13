@@ -144,6 +144,13 @@ export class Game extends Phaser.Scene {
         case 'shieldPop':
           sfx.play('shieldPop');
           break;
+        case 'bossHit':
+          this.explode(e.x, e.y, 0.6);
+          sfx.play('explosion');
+          break;
+        case 'dizzy':
+          sfx.play('dizzy');
+          break;
         case 'kill':
           this.explode(e.x, e.y);
           sfx.play('explosion');

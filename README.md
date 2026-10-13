@@ -1,6 +1,6 @@
 # Word Defenders
 
-A tower-defense spelling game. Aliens march toward your base carrying this week's spelling words; type a word to zap its alien, earn coins, and build towers between waves. Bosses wear shields that only typing can pop.
+A tower-defense spelling game. Aliens march toward your base carrying this week's spelling words; type a word to zap its alien, earn coins, and build towers between waves. Towers slow the aliens down, but only a typed word finishes one. Bosses wear shields that only typing can pop.
 
 ## Play it
 

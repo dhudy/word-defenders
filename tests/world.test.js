@@ -66,6 +66,19 @@ describe('movement', () => {
     expect(events).toContainEqual({ type: 'leak', id: 1, alienType: 'boss', hearts: 5 });
   });
 
+  it('walks dizzy aliens at half speed, on top of any freeze slow', () => {
+    const world = createWorld({ path, spawns: [{ type: 'blob', at: 0 }], drawWord: cycle(['cat']) });
+    stepWorld(world, 0);
+    world.aliens[0].dizzy = true;
+    stepWorld(world, 1);
+    expect(world.aliens[0].x).toBeCloseTo(5);
+    const frozen = createWorld({ path, spawns: [{ type: 'blob', at: 0 }], drawWord: cycle(['cat']), towers: [{ pad: 0, type: 'freeze', level: 1, x: 0, y: 0 }] });
+    stepWorld(frozen, 0);
+    frozen.aliens[0].dizzy = true;
+    stepWorld(frozen, 1);
+    expect(frozen.aliens[0].x).toBeCloseTo(3.5);
+  });
+
   it('slows aliens inside a freeze tower range', () => {
     const towers = [{ pad: 0, type: 'freeze', level: 1, x: 0, y: 0 }];
     const world = createWorld({ path, spawns: [{ type: 'blob', at: 0 }], drawWord: cycle(['cat']), towers });
@@ -78,14 +91,31 @@ describe('movement', () => {
 });
 
 describe('towers', () => {
-  it('a blaster shoots the alien and kills it with tower credit', () => {
+  it('a blaster wears an alien down to 1 HP and makes it dizzy, but never kills it', () => {
     const towers = [{ pad: 3, type: 'blaster', level: 1, x: 50, y: 40 }];
     const world = createWorld({ path, spawns: [{ type: 'blob', at: 0 }], drawWord: cycle(['cat']), towers });
     const events = run(world, 5);
-    expect(events.filter((e) => e.type === 'fire')).toHaveLength(3);
+    expect(events.filter((e) => e.type === 'fire')).toHaveLength(2);
     expect(events.find((e) => e.type === 'fire')).toMatchObject({ pad: 3, towerType: 'blaster' });
-    expect(events.find((e) => e.type === 'kill')).toMatchObject({ id: 1, alienType: 'blob', by: 'tower' });
-    expect(world.aliens).toEqual([]);
+    expect(events.filter((e) => e.type === 'dizzy')).toEqual([{ type: 'dizzy', id: 1, x: expect.any(Number), y: 0 }]);
+    expect(events.some((e) => e.type === 'kill')).toBe(false);
+    expect(world.aliens[0]).toMatchObject({ hp: 1, dizzy: true });
+  });
+
+  it('stops tower damage at 1 HP even when a hit would overshoot it', () => {
+    const towers = [{ pad: 0, type: 'rocket', level: 3, x: 50, y: 40 }];
+    const world = createWorld({ path, spawns: [{ type: 'zoomer', at: 0 }], drawWord: cycle(['cat']), towers });
+    run(world, 3);
+    expect(world.aliens[0]).toMatchObject({ hp: 1, dizzy: true });
+  });
+
+  it('blasters skip dizzy aliens and shoot the next one', () => {
+    const towers = [{ pad: 0, type: 'blaster', level: 1, x: 50, y: 40 }];
+    const world = createWorld({ path, spawns: [{ type: 'blob', at: 0 }, { type: 'blob', at: 0.5 }], drawWord: cycle(['cat', 'dog']), towers });
+    run(world, 1.5);
+    expect(world.aliens.map((a) => [a.hp, a.dizzy])).toEqual([[1, true], [3, false]]);
+    run(world, 1);
+    expect(world.aliens.map((a) => a.hp)).toEqual([1, 2]);
   });
 
   it('turns towers to face their target', () => {
@@ -106,7 +136,8 @@ describe('towers', () => {
     const towers = [{ pad: 0, type: 'rocket', level: 1, x: 100, y: 40 }];
     const world = createWorld({ path, spawns: [{ type: 'blob', at: 0 }, { type: 'blob', at: 0.1 }], drawWord: cycle(['cat', 'dog']), towers });
     const events = run(world, 1);
-    expect(events.filter((e) => e.type === 'kill')).toHaveLength(2);
+    expect(events.filter((e) => e.type === 'dizzy')).toHaveLength(2);
+    expect(world.aliens.map((a) => a.hp)).toEqual([1, 1]);
     expect(events.find((e) => e.type === 'hit')).toMatchObject({ splash: true });
   });
 
@@ -129,28 +160,49 @@ describe('zapAlien', () => {
     expect(world.aliens).toEqual([]);
   });
 
-  it('pops boss shields one word at a time, then lets towers hit it', () => {
+  it('pops boss shields one word at a time, then shows a list word and lets towers hit it', () => {
     const towers = [{ pad: 0, type: 'blaster', level: 1, x: 20, y: 40 }];
-    const world = createWorld({ path, spawns: [{ type: 'boss', at: 0 }], drawWord: cycle(['x']), bossWords: ['because', 'friend'], towers });
+    const world = createWorld({ path, spawns: [{ type: 'boss', at: 0 }], drawWord: cycle(['robot']), bossWords: ['because', 'friend'], towers });
     stepWorld(world, 0.1);
     expect(zapAlien(world, 1)).toEqual([{ type: 'shieldPop', id: 1, remaining: 1, x: world.aliens[0].x, y: 0 }]);
     expect(world.aliens[0].word).toBe('friend');
     expect(zapAlien(world, 1)[0]).toMatchObject({ type: 'shieldPop', remaining: 0 });
-    expect(world.aliens[0].word).toBeNull();
+    expect(world.aliens[0].word).toBe('robot');
     const events = run(world, 1);
     expect(events.some((e) => e.type === 'fire')).toBe(true);
   });
 
-  it('lets typing finish the boss in a world without shooting towers', () => {
-    const world = createWorld({ path, spawns: [{ type: 'boss', at: 0 }], drawWord: cycle(['x']), bossWords: ['because', 'friend'], typingFinishesBoss: true });
+  it('takes 10 HP per typed word once the shields are down, with a new word each time', () => {
+    const world = createWorld({ path, spawns: [{ type: 'boss', at: 0 }], drawWord: cycle(['cat', 'dog', 'egg']), bossWords: ['because'] });
     stepWorld(world, 0.1);
-    expect(zapAlien(world, 1)).toEqual([{ type: 'shieldPop', id: 1, remaining: 1, x: world.aliens[0].x, y: 0 }]);
-    const { x } = world.aliens[0];
-    expect(zapAlien(world, 1)).toEqual([
-      { type: 'shieldPop', id: 1, remaining: 0, x, y: 0 },
-      { type: 'kill', id: 1, alienType: 'boss', by: 'typing', x, y: 0 },
-    ]);
+    zapAlien(world, 1);
+    const boss = world.aliens[0];
+    expect(boss).toMatchObject({ word: 'cat', hp: 30 });
+    expect(zapAlien(world, 1)).toEqual([{ type: 'bossHit', id: 1, hp: 20, x: boss.x, y: 0 }]);
+    expect(boss.word).toBe('dog');
+    zapAlien(world, 1);
+    expect(boss).toMatchObject({ word: 'egg', hp: 10 });
+    expect(zapAlien(world, 1)).toEqual([{ type: 'kill', id: 1, alienType: 'boss', by: 'typing', x: boss.x, y: 0 }]);
     expect(world.aliens).toEqual([]);
+  });
+
+  it('lets towers wear the boss down to 1 HP, then the next typed word finishes it', () => {
+    const towers = [10, 60, 110].map((x, pad) => ({ pad, type: 'blaster', level: 3, x, y: 40 }));
+    const world = createWorld({ path, spawns: [{ type: 'boss', at: 0 }], drawWord: cycle(['cat']), bossWords: ['because'], towers });
+    stepWorld(world, 0.1);
+    zapAlien(world, 1);
+    const events = run(world, 20);
+    expect(events.some((e) => e.type === 'kill')).toBe(false);
+    expect(world.aliens[0]).toMatchObject({ hp: 1, dizzy: true });
+    expect(zapAlien(world, 1)).toContainEqual(expect.objectContaining({ type: 'kill', alienType: 'boss', by: 'typing' }));
+  });
+
+  it('draws the boss a word whose first letter no other alien shows', () => {
+    const drawWord = vi.fn(cycle(['cat', 'dog']));
+    const world = createWorld({ path, spawns: [{ type: 'blob', at: 0 }, { type: 'boss', at: 0 }], drawWord, bossWords: ['because'] });
+    stepWorld(world, 0.1);
+    zapAlien(world, 2);
+    expect(drawWord).toHaveBeenLastCalledWith(new Set(['c']));
   });
 
   it('does nothing for unknown or wordless aliens', () => {

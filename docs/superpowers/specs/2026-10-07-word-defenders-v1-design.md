@@ -6,7 +6,7 @@
 
 ## 1. Purpose
 
-Word Defenders is a browser tower-defense game that helps a 7-year-old practice his weekly spelling words. Aliens march along a path, each carrying a word. Typing a word zaps its alien. Kills earn coins, and between waves he spends them on towers: first a Freeze Ray that slows aliens down so he has time to type, then towers that shoot the aliens he doesn't type. Bosses wear shields that only typing can pop; once the shields are down, the towers finish the boss off.
+Word Defenders is a browser tower-defense game that helps a 7-year-old practice his weekly spelling words. Aliens march along a path, each carrying a word. Typing a word zaps its alien. Kills earn coins, and between waves he spends them on towers that buy him time: a Freeze Ray slows aliens down, and shooting towers wear them down until they're too dizzy to hurry. Towers never finish an alien; only a typed word does. Bosses wear shields that only typing can pop, then keep showing words until typing finishes them.
 
 ### Success criteria
 
@@ -116,7 +116,7 @@ One map: a winding path across an alien planet, from a spawn portal at the left 
 - **Lock-on:** with no alien locked, a key that matches the first character of an on-screen alien's word locks onto that alien. If several match, the alien furthest along the path wins. A key that matches no alien plays a soft buzz and does nothing else.
 - **Progress:** each correct key turns that letter green. The next letter pulses. The locked alien gets a glowing ring.
 - **Wrong key:** the alien wobbles and a soft buzz plays. Progress stays on the same letter, with no reset and no penalty.
-- **Completing a word:** a laser fires from the base and the alien dies instantly, whatever its HP. On a boss, completing the word pops one shield.
+- **Completing a word:** a laser fires from the base and the alien dies instantly, whatever its HP. On a boss, completing the word pops one shield, or once the shields are down, takes 10 HP off it.
 - **Release:** Esc releases the lock. If the locked alien dies or reaches the base, the lock releases automatically.
 - **Matching:** case-insensitive. Apostrophes and hyphens are typed characters ("don't").
 - **Key handling:** the game calls `preventDefault` on every key it consumes. This stops browser shortcuts such as Firefox's Quick Find on `'`.
@@ -138,13 +138,13 @@ One map: a winding path across an alien planet, from a spawn portal at the left 
 | Chonk | 0.7× | 9 | 4 | 1 |
 | Boss | 0.5× | 20 + 10 per shield | 1 (wave 5) | 5 |
 
-Typing kills any regular alien instantly, so HP only matters for towers.
+Typing kills any regular alien instantly, whatever its HP. Towers can't take an alien below 1 HP: an alien worn down to 1 HP turns **dizzy** (stars circle its head) and walks at half speed until its word is typed.
 
 ### Boss
 
 Two boss designs share the same rules: the player picked one for missions 1–5 and another for missions 6–10, so the second half of the game brings a new boss.
 
-The boss carries 1–3 shields. While any shield is up, towers can't damage it. Each shield shows one word. Typing that word pops the shield, releases the lock and reveals the next shield's word. With every shield gone, the boss shows no word and towers finish it. In missions 1–2, before any shooting tower is unlocked, typing the last shield's word defeats the boss instead.
+The boss carries 1–3 shields. While any shield is up, towers can't damage it. Each shield shows one word. Typing that word pops the shield, releases the lock and reveals the next shield's word. With every shield gone, the boss shows a word from the weekly list (avoiding first letters already on screen). Each typed word takes 10 HP off and brings a new word, until a word takes it to 0. Towers can hurt it once the shields are gone, but only down to 1 HP, so a typed word always lands the last hit. Without towers, that's 3 words after the shields at 1 shield, 4 at 2 and 5 at 3.
 
 ### Towers
 
@@ -153,26 +153,25 @@ Building, upgrading and selling happen only during the break between waves. The 
 | Tower | Role | Cost (L1 / L2 / L3) | First mission |
 |---|---|---|---|
 | Freeze Ray | Slows every alien in range by 30% / 45% / 60%; no damage; 2.5-tile range | 30 / 20 / 30 | 1 |
-| Blaster | Single target. 1 damage, 1 shot every 2 s, 3-tile range | 20 / 15 / 25 | 3 |
+| Blaster | Single target. 1 damage, 1 shot/s, 3-tile range | 20 / 15 / 25 | 3 |
 | Rocket | 3 splash damage (1-tile radius), 0.4 shots/s, 3.5-tile range | 40 / 25 / 35 | 5 |
 
 - Each upgrade adds 50% damage and 10% range. Freeze Ray upgrades raise the slow, as shown in the table.
-- Towers target the alien in range that is furthest along the path. They skip shielded bosses.
+- Towers target the alien in range that is furthest along the path. Shooting towers skip shielded bosses and dizzy aliens.
 - Selling refunds 50% of the coins spent on that tower, upgrades included.
 - A tower is available in its first mission and every mission after it.
-- Towers back up typing; they don't replace it. The first tower only slows aliens, and one Level 1 Blaster can't kill a Blob on its own.
+- Towers back up typing; they don't replace it. Their damage stops at 1 HP, where the alien turns dizzy (see Aliens), so every alien still needs its word typed.
 
 ### Coins
 
 | Event | Coins |
 |---|---|
 | Typed kill | 5 |
-| Tower kill | 2 |
-| Boss kill (replaces the tower-kill reward) | 25 |
+| Boss kill | 25 |
 | Wave ends with hearts left | 10 |
 | Mission start | 30 |
 
-Typing always pays more than letting a tower take the kill.
+Only typing kills, so every kill pays the typed reward.
 
 ### Missions and waves
 
@@ -259,7 +258,7 @@ There is no pause key: any letter might belong to a word.
 
 ## 9. Sound effects
 
-Web Audio oscillators and envelopes generate every effect in code, with no audio files. The effects: correct key, wrong key, laser zap, a shot sound for each tower, explosion, coin, shield pop, boss alarm, wave start, victory jingle and a gentle try-again sound. The Grown-ups sound setting mutes them all.
+Web Audio oscillators and envelopes generate every effect in code, with no audio files. The effects: correct key, wrong key, laser zap, a shot sound for each tower, explosion, coin, shield pop, dizzy warble, boss alarm, wave start, victory jingle and a gentle try-again sound. The Grown-ups sound setting mutes them all.
 
 ## 10. Testing
 
@@ -268,7 +267,7 @@ Web Audio oscillators and envelopes generate every effect in code, with no audio
 - `typing`: lock-on, the furthest-along tie-break, wrong keys, Esc, case-insensitivity, apostrophes and hyphens, release when the target dies.
 - `words`: parsing and validation messages, the deck using every word before repeating, first-letter avoidance, boss words from the longest third.
 - `missions` / `waves`: every mission has 5 waves with the boss last in wave 5, shield counts and tower unlocks match Section 5, alien mixes respect each alien's first mission, and the same seed reproduces the same spawns.
-- `towers`: stats per level, targeting the furthest-along alien, skipping shielded bosses.
+- `towers`: stats per level, targeting the furthest-along alien, skipping shielded bosses and dizzy aliens; tower damage stopping at 1 HP.
 - `economy`: rewards, costs, the 50% refund including upgrades.
 - `stars`: each threshold and the 1-star cap after a retry.
 - `save`: a save-then-load round trip, invalid JSON, missing or invalid fields, an older version.

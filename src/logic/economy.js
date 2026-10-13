@@ -1,6 +1,6 @@
 import { TOWERS, MAX_LEVEL } from './towers.js';
 
-export const REWARDS = Object.freeze({ typedKill: 5, towerKill: 2, boss: 25, waveClear: 10, missionStart: 30 });
+export const REWARDS = Object.freeze({ typedKill: 5, boss: 25, waveClear: 10, missionStart: 30 });
 
 export function buildCost(type) {
   return TOWERS[type].costs[0];
@@ -19,7 +19,7 @@ export function sellValue(type, level) {
   return Math.floor(totalSpent(type, level) / 2);
 }
 
-export function killReward({ alienType, by }) {
-  if (alienType === 'boss') return REWARDS.boss;
-  return by === 'typing' ? REWARDS.typedKill : REWARDS.towerKill;
+// Only typing kills, so the reward depends on the alien alone.
+export function killReward({ alienType }) {
+  return alienType === 'boss' ? REWARDS.boss : REWARDS.typedKill;
 }

@@ -20,6 +20,7 @@ const SOUNDS = {
   tryAgain: (s) => [392, 330].forEach((freq, i) => s.tone({ freq, dur: 0.25, type: 'triangle', vol: 0.08, delay: i * 0.2 })),
   build: (s) => s.tone({ freq: 523, to: 784, dur: 0.12, type: 'square', vol: 0.06 }),
   click: (s) => s.tone({ freq: 600, dur: 0.04, type: 'square', vol: 0.04 }),
+  dizzy: (s) => [0, 0.08, 0.16, 0.24].forEach((delay, i) => s.tone({ freq: i % 2 ? 560 : 740, dur: 0.07, type: 'triangle', vol: 0.05, delay })),
 };
 
 export const SOUND_NAMES = Object.freeze(Object.keys(SOUNDS));

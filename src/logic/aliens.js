@@ -1,4 +1,10 @@
 export const BLOB_CROSSING_SECONDS = 30;
+// Towers can't take an alien below this HP: only a typed word finishes it.
+export const TOWER_HP_FLOOR = 1;
+// An alien worn down to the floor walks at this fraction of its speed until it's typed.
+export const DIZZY_SPEED = 0.5;
+// HP each typed word takes off a boss once its shields are down.
+export const BOSS_WORD_DAMAGE = 10;
 
 export const ALIENS = Object.freeze({
   blob: Object.freeze({ speed: 1, hp: 3, hearts: 1, firstMission: 1 }),
